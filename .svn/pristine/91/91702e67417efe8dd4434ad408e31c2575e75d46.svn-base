@@ -1,0 +1,10 @@
+package com.tr.ibs.org.service;
+
+import java.util.List;
+
+import com.tr.ibs.org.model.Depposlnk;
+
+public interface IDepposlnkService {
+
+	public List<Depposlnk> queryByDepid(int depid);
+}

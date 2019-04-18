@@ -1,0 +1,29 @@
+package com.tr.ibs.portal.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tr.ibs.portal.dao.RoleauthcfgDao;
+import com.tr.ibs.portal.service.IRoleauthcfgService;
+
+@Service
+@Transactional
+public class RoleauthcfgServiceImpl implements IRoleauthcfgService {
+	
+	Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private RoleauthcfgDao roleauthcfgDao;
+
+	@Override
+	public List<Map<String, Object>> queryRoleauthcfgsByRoleid(Integer roleid) {
+		return roleauthcfgDao.queryRoleauthcfgsByRoleid(roleid);
+	}
+
+}

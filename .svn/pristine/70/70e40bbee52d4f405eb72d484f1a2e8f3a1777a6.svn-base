@@ -1,0 +1,245 @@
+package com.tr.ibs.org.model;
+
+import java.util.Date;
+
+public class Employee {
+    private Long id;
+
+    private String empno;
+
+    private String empname;
+
+    private String idnum;
+
+    private String gender;
+
+    private String education;
+
+    private Date birthday;
+
+    private String homephone;
+
+    private String telephone;
+
+    private String email;
+
+    private Date entrydate;
+
+    private Date leavedate;
+
+    private Date retiredate;
+
+    private Long departmentid;
+
+    private String cardno;
+
+    private String empsts;
+
+    private Long custid;
+
+    private Integer sortno;
+
+    private Date createtime;
+
+    private Date modifytime;
+
+    private String creator;
+
+    private String modifier;
+
+    private String delflag;
+
+    private byte[] photo;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEmpno() {
+        return empno;
+    }
+
+    public void setEmpno(String empno) {
+        this.empno = empno == null ? null : empno.trim();
+    }
+
+    public String getEmpname() {
+        return empname;
+    }
+
+    public void setEmpname(String empname) {
+        this.empname = empname == null ? null : empname.trim();
+    }
+
+    public String getIdnum() {
+        return idnum;
+    }
+
+    public void setIdnum(String idnum) {
+        this.idnum = idnum == null ? null : idnum.trim();
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender == null ? null : gender.trim();
+    }
+
+    public String getEducation() {
+        return education;
+    }
+
+    public void setEducation(String education) {
+        this.education = education == null ? null : education.trim();
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getHomephone() {
+        return homephone;
+    }
+
+    public void setHomephone(String homephone) {
+        this.homephone = homephone == null ? null : homephone.trim();
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone == null ? null : telephone.trim();
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email == null ? null : email.trim();
+    }
+
+    public Date getEntrydate() {
+        return entrydate;
+    }
+
+    public void setEntrydate(Date entrydate) {
+        this.entrydate = entrydate;
+    }
+
+    public Date getLeavedate() {
+        return leavedate;
+    }
+
+    public void setLeavedate(Date leavedate) {
+        this.leavedate = leavedate;
+    }
+
+    public Date getRetiredate() {
+        return retiredate;
+    }
+
+    public void setRetiredate(Date retiredate) {
+        this.retiredate = retiredate;
+    }
+
+    public Long getDepartmentid() {
+        return departmentid;
+    }
+
+    public void setDepartmentid(Long departmentid) {
+        this.departmentid = departmentid;
+    }
+
+    public String getCardno() {
+        return cardno;
+    }
+
+    public void setCardno(String cardno) {
+        this.cardno = cardno == null ? null : cardno.trim();
+    }
+
+    public String getEmpsts() {
+        return empsts;
+    }
+
+    public void setEmpsts(String empsts) {
+        this.empsts = empsts == null ? null : empsts.trim();
+    }
+
+    public Long getCustid() {
+        return custid;
+    }
+
+    public void setCustid(Long custid) {
+        this.custid = custid;
+    }
+
+    public Integer getSortno() {
+        return sortno;
+    }
+
+    public void setSortno(Integer sortno) {
+        this.sortno = sortno;
+    }
+
+    public Date getCreatetime() {
+        return createtime;
+    }
+
+    public void setCreatetime(Date createtime) {
+        this.createtime = createtime;
+    }
+
+    public Date getModifytime() {
+        return modifytime;
+    }
+
+    public void setModifytime(Date modifytime) {
+        this.modifytime = modifytime;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator == null ? null : creator.trim();
+    }
+
+    public String getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(String modifier) {
+        this.modifier = modifier == null ? null : modifier.trim();
+    }
+
+    public String getDelflag() {
+        return delflag;
+    }
+
+    public void setDelflag(String delflag) {
+        this.delflag = delflag == null ? null : delflag.trim();
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
+    }
+}

@@ -1,0 +1,7 @@
+package com.tr.ibs.portal.service.impl;
+
+import com.tr.ibs.portal.service.IAppgroupService;
+
+public class AppgroupServiceImpl implements IAppgroupService {
+
+}

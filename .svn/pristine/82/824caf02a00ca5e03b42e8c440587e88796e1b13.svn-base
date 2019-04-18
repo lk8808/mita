@@ -1,0 +1,15 @@
+package com.tr.ibs.portal.service;
+
+import java.util.List;
+
+import com.tr.ibs.entity.RespData;
+import com.tr.ibs.portal.model.Appgroup;
+
+public interface IAppgroupService {
+
+	public List<Appgroup> queryAppgroups();
+	
+	public RespData save(Appgroup appgroup);
+	
+	public RespData del(String ids);
+}

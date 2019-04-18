@@ -1,0 +1,112 @@
+html,body{
+	margin: 0px;
+	padding: 0px;
+	background-color: fcfcfc;
+	overflow: hidden;
+}
+
+*{margin:0px;padding:0px; font-family:微软雅黑;}
+
+ul,li{ 
+	padding:0;
+	margin:0;
+	list-style:none;
+}
+
+.main_header{
+	background-image: url("../img/main/head.gif") ; 
+	background-repeat: repeat-x;
+	overflow: hidden;
+	height: 50px;
+	width: 100%;
+}
+
+.main_header .leftlogo{
+	position: absolute;
+ 	top: 0px;
+ 	left: 0px;
+ 	z-index: 20;
+ 	overflow: hidden;
+ 	height: 50px !important;
+	margin-top: 0px;
+}
+
+.main_header .leftlogo div{
+	float:left;
+}
+
+.main_header .titlename{
+	line-height: 40px;
+	margin-left: 20px;
+	margin-top: 8px;
+	font-size: 26px;
+}
+
+.main_header .logoimg{
+	float:left; 
+	margin:8px 25px 0 25px; _margin-left:25px; _margin-right:25px; 
+	width:180px; height:40px; 
+	background:url(../img/main/company_logo.png) no-repeat; _background:url(../img/main/company_logo.png) no-repeat;
+	background-size:180px 40px;
+}
+
+.main_header .rightop{
+	position: absolute;
+ 	top: 0px;
+ 	right: 0px;
+ 	z-index: 100;
+ 	overflow: hidden;
+ 	height: 50px !important;
+}
+.main_header .rightop div{
+	float:right;
+	height: 20px;
+	margin-right: 20px;
+	margin-top: 30px;
+}
+.main_header .rightop div a{
+	font-size: 12px;
+	text-decoration: none;
+}
+.main_header .rightop .uinfo{
+	background-image: url("../img/main/user-head2.gif") ;
+	background-repeat: no-repeat;
+	width: 30px;
+	height:30px;
+	margin-right: 5px;
+	margin-top: 25px;
+}
+
+/*主界面样式微调*/
+.panel-body-noheader {
+	border-top-width: 0;
+}
+#menuTab .panel-body {
+	border-width: 0;
+}
+
+/*手风琴样式调整*/
+#RightAccordion .panel-title {
+	padding-left: 10px;
+}
+
+/*菜单树样式调整*/
+.tree-title {
+	margin-left: 10px;
+	font-weight: bold;
+	color: #666;
+}
+.tree-node-selected .tree-title {
+	color: #fff;
+}
+.tree-folder-open {
+    background: none;
+}
+
+.accordion .accordion-header-selected {
+	background: #F2F2F2;
+}
+.accordion .accordion-header-selected .panel-title {
+	color: #777;
+}
+

@@ -1,0 +1,53 @@
+package com.tr.ibs.portal.model;
+
+public class Roleauthcfg {
+    private String cfgtype;
+
+    private Long authcfgid;
+
+    private Long departmentid;
+
+    private Long positionid;
+
+    private Long roleid;
+
+    public String getCfgtype() {
+        return cfgtype;
+    }
+
+    public void setCfgtype(String cfgtype) {
+        this.cfgtype = cfgtype == null ? null : cfgtype.trim();
+    }
+
+    public Long getAuthcfgid() {
+        return authcfgid;
+    }
+
+    public void setAuthcfgid(Long authcfgid) {
+        this.authcfgid = authcfgid;
+    }
+
+    public Long getDepartmentid() {
+        return departmentid;
+    }
+
+    public void setDepartmentid(Long departmentid) {
+        this.departmentid = departmentid;
+    }
+
+    public Long getPositionid() {
+        return positionid;
+    }
+
+    public void setPositionid(Long positionid) {
+        this.positionid = positionid;
+    }
+
+    public Long getRoleid() {
+        return roleid;
+    }
+
+    public void setRoleid(Long roleid) {
+        this.roleid = roleid;
+    }
+}

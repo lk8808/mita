@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tr.ibs.comm.dao.DictDao">
+
+    <select id="get" resultType="com.tr.ibs.comm.model.Dict">
+        select * from comm_dict where dicttypeid=#{0} and dictid=#{1}
+    </select>
+
+    <!-- 查询数据字典 -->
+    <select id="queryDictsByDicttypeid" resultType="com.tr.ibs.comm.model.Dict">
+        select * from comm_dict where dicttypeid=#{dicttypeid} order by sortno
+    </select>
+    
+    <select id="queryDicttypesWithPage" parameterType="map" resultType="map">
+        SELECT dicttypeid, dicttypename
+		FROM comm_dict	
+		<where>
+	        <if test="dicttypeid != null and dicttypeid != ''">
+	           dicttypeid like '%${dicttypeid}%'
+	        </if>
+	        <if test="dicttypename != null and dicttypename != ''">
+	           dicttypename like '${dicttypename}%'
+	        </if>
+        </where>
+        GROUP BY dicttypeid, dicttypename
+        limit #{begin}, #{rows}
+    </select>
+    
+    <select id="countDicttypes" parameterType="map" resultType="Integer">
+        SELECT COUNT(DISTINCT(dicttypeid))
+        FROM comm_dict  
+        <where>
+	        <if test="dicttypeid != null and dicttypeid != ''">
+	           and dicttypeid like '%${dicttypeid}%'
+	        </if>
+	        <if test="dicttypename != null and dicttypename != ''">
+	           and dicttypename like '${dicttypename}%'
+	        </if>
+        </where>
+    </select>
+    
+</mapper>

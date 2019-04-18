@@ -1,0 +1,147 @@
+package com.tr.ibs.portal.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tr.ibs.entity.RespData;
+import com.tr.ibs.entity.Rtsts;
+import com.tr.ibs.portal.dao.ApplicationDao;
+import com.tr.ibs.portal.dao.MenuDao;
+import com.tr.ibs.portal.model.Application;
+import com.tr.ibs.portal.model.Menu;
+import com.tr.ibs.portal.service.IMenuService;
+
+@Service
+@Transactional
+public class MenuServiceImpl implements IMenuService {
+
+	Logger logger = LoggerFactory.getLogger(MenuServiceImpl.class);
+	
+	@Autowired
+	private MenuDao menuDao;
+	
+	@Autowired
+	private ApplicationDao applicationDao;
+
+	@Override
+	public List<Menu> queryMenusLevel1() {
+		return menuDao.queryMenusLevel1();
+	}
+
+	@Override
+	public List<Menu> queryMenusByParentid(String parentid) {
+		return menuDao.queryMenusByParentid(parentid);
+	}
+
+	@Override
+	public List<Map<String, Object>> getMenuTree(String parentid) {
+		List<Map<String, Object>> nodes = new ArrayList<Map<String, Object>>();
+		List<Menu> menus = null;
+		//
+		if (parentid == null || "".equals(parentid) || "0".equals(parentid)) {
+			menus = menuDao.queryMenusLevel1();
+		} else {
+			menus = menuDao.queryMenusByParentid(parentid);
+		}
+		for (Menu menu : menus) {
+			Map<String, Object> node = new HashMap<String, Object>();
+			Map<String, Object> attributes = new HashMap<String, Object>();
+			attributes.put("id", menu.getId());
+			attributes.put("type", "menu");
+			attributes.put("menuurl", menu.getMenuurl());
+			node.put("id", menu.getId());
+			node.put("text", menu.getMenuname());
+			node.put("attributes", attributes);
+			List<Map<String, Object>> children = this.getMenuTree(String.valueOf(menu.getId()));
+			if (children != null && children.size() > 0) {
+				node.put("state", "closed");
+				node.put("children", children);
+			}
+			nodes.add(node);
+		}
+		return nodes;
+	}
+
+	@Override
+	public List<Map<String, Object>> getAppMenuTree() {
+		List<Map<String, Object>> nodes = new ArrayList<Map<String, Object>>();
+		//获取所有应用
+		List<Application> apps = applicationDao.queryAllList();
+		for (Application app : apps) {
+			//创建节点
+			Map<String, Object> node = new HashMap<String, Object>();
+			Map<String, Object> attributes = new HashMap<String, Object>();
+			attributes.put("id", app.getId());
+			attributes.put("type", "app");
+			node.put("id", app.getId());
+			node.put("text", app.getAppname());
+			node.put("attributes", attributes);
+			//获取应用下的菜单
+			List<Menu> menus = menuDao.queryMenusByAppid(String.valueOf(app.getId()));
+			List<Map<String, Object>> children = new ArrayList<Map<String, Object>>();
+			for (Menu menu : menus) {
+				Map<String, Object> node1 = new HashMap<String, Object>();
+				Map<String, Object> attributes1 = new HashMap<String, Object>();
+				attributes1.put("id", menu.getId());
+				attributes1.put("type", "menu");
+				node1.put("id", menu.getId());
+				node1.put("text", menu.getMenuname());
+				node1.put("attributes", attributes1);
+				List<Map<String, Object>> children1 = this.getMenuTree(String.valueOf(menu.getId()));
+				if (children1 != null && children1.size() > 0) {
+					node1.put("state", "closed");
+					node1.put("children", children1);
+				}
+				children.add(node1);
+			}
+			node.put("state", "closed");
+			if (children != null && children.size() > 0) {
+				node.put("children", children);
+			}
+			nodes.add(node);
+		}
+		return nodes;
+	}
+
+	@Override
+	public RespData queryMenus4Tree(Map<String, Object> params) {
+		RespData respData = new RespData(new Rtsts("000000", "查询成功！"));
+		int page = (int)params.get("page");
+		int rows = (int)params.get("rows");
+		params.put("begin", (page-1)*rows);
+		
+		String parentid = String.valueOf(params.get("parentid"));
+		String type = (String)params.get("type");
+		//不存在上级id，查询所有
+		if (parentid == null || type == null) {
+			respData.setRtdata("rows", menuDao.queryListWithPage(params));
+			respData.setRtdata("total", menuDao.count(params));
+			return respData;
+		}
+		//上级类型为应用，查询应用下所有菜单
+		if ("app".equals(type)) {
+			params.put("appid", parentid);
+			respData.setRtdata("rows", menuDao.querySubMenusByAppidWithPage(params));
+			respData.setRtdata("total", menuDao.countSubMenusByAppid(params));
+			return respData;
+		}
+		//上级类型为菜单，查询该菜单下所有子菜单
+		if ("menu".equals(type)) {
+			params.put("parentid", parentid);
+			respData.setRtdata("rows", menuDao.querySubMenusByParentidWithPage(params));
+			respData.setRtdata("total", menuDao.countSubMenusByParentid(params));
+			return respData;
+		}
+		
+		return null;
+	}
+	
+}

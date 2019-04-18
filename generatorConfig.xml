@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>    
+<!DOCTYPE generatorConfiguration    
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"    
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">    
+<!-- 第二种mybatis逆向生成xml配置 -->    
+<generatorConfiguration>  
+    <!-- 需要指明数据库连接器的绝对路径 -->
+    <classPathEntry location="D:\Program Files (x86)\Workspaces\MyEclipse 2017 CI\ibs\mysql-connector-java-5.1.43.jar" />
+    <context id="mysqlTables" targetRuntime="MyBatis3">    
+        
+        <commentGenerator>    
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->    
+            <property name="suppressAllComments" value="true" />    
+        </commentGenerator>
+        
+        <!-- 生成的pojo，将implements Serializable-->    
+        <!-- 
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"></plugin>   
+         --> 
+    
+        <!-- 数据库链接URL、用户名、密码 -->    
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"    
+                        connectionURL="jdbc:mysql://47.104.184.86:3308/ibs"    
+                        userId="ibs"    
+                        password="ibs1qaz2wsx">    
+        </jdbcConnection>    
+    
+        <!--      
+       	 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer    
+            true，把JDBC DECIMAL 和 NUMERIC 类型解析为java.math.BigDecimal      
+        -->    
+        <javaTypeResolver>    
+            <property name="forceBigDecimals" value="true" />    
+        </javaTypeResolver>    
+    
+        <!--     
+        	生成model模型，对应的包路径，以及文件存放路径(targetProject)，targetProject可以指定具体的路径,如./src/main/java，    
+        	也可以使用“MAVEN”来自动生成，这样生成的代码会在target/generatord-source目录下    
+        -->    
+           
+       <!--  <javaModelGenerator targetPackage="com.tr.ibs.org.model" targetProject="./src/main/java">    
+            <property name="enableSubPackages" value="true"/>      
+            <property name="trimStrings" value="true" />    
+        </javaModelGenerator>   -->
+         <javaModelGenerator targetPackage="com.tr.ibs.portal.model" targetProject="./src/main/java">    
+            <property name="enableSubPackages" value="true"/>      
+            <property name="trimStrings" value="true" />    
+        </javaModelGenerator> 
+    
+        <!--对应的mapper.xml文件  -->    
+        <!-- 
+        <sqlMapGenerator targetPackage="mapper" targetProject="./src/main/resources">    
+            <property name="enableSubPackages" value="true"/>    
+        </sqlMapGenerator>    
+        -->
+    
+        <!-- 对应的Mapper接口类文件 -->    
+        <!--
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.tr.ibs.base.dao" targetProject="./src/main/java">    
+            <property name="enableSubPackages" value="true"/>    
+        </javaClientGenerator>    
+        -->
+    
+        <!-- 列出要生成代码的所有表 -->   
+        <!-- 
+        <table tableName="portal_appgroup" domainObjectName="Appgroup"    
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"    
+               enableSelectByExample="false" selectByExampleQueryId="false" >    
+            <property name="useActualColumnNames" value="false"/>    
+        </table>  
+         -->   
+<!--         <table tableName="org_user" domainObjectName="User" />     
+        <table tableName="org_employee" domainObjectName="Employee" />       
+        <table tableName="org_department" domainObjectName="Department" />    
+        <table tableName="org_position" domainObjectName="Position" />    
+        <table tableName="org_company" domainObjectName="Company" />    
+        <table tableName="org_userrolelnk" domainObjectName="Userrolelnk" /> 
+        <table tableName="org_empposlnk" domainObjectName="Empposlnk" /> 
+        <table tableName="org_depemplnk" domainObjectName="Depemplnk" /> 
+        <table tableName="org_depposlnk" domainObjectName="Depposlnk" />     -->
+        <table tableName="portal_role" domainObjectName="Role" />
+        
+    </context>    
+</generatorConfiguration>

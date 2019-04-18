@@ -1,0 +1,73 @@
+package com.tr.ibs.portal.service.impl;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tr.ibs.entity.RespData;
+import com.tr.ibs.entity.Rt;
+import com.tr.ibs.portal.dao.AppgroupDao;
+import com.tr.ibs.portal.model.Appgroup;
+import com.tr.ibs.portal.service.IAppgroupService;
+
+@Service
+@Transactional
+public class AppgroupServiceImpl implements IAppgroupService {
+	
+	Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private AppgroupDao appgroupDao;
+
+	@Override
+	public List<Appgroup> queryAppgroups() {
+		return appgroupDao.queryAllList();
+	}
+
+	@Override
+	public RespData save(Appgroup appgroup) {
+		Rt rt = new Rt("000000", "保存成功！");
+		RespData respData = new RespData();
+		try {
+			if (appgroup.getId() != null && appgroup.getId() > 0) {
+				appgroupDao.update(appgroup);
+			} else {
+				appgroupDao.insert(appgroup);
+			}
+		
+		} catch (Exception e) {
+			rt.setCode("100001");
+			rt.setMsg("保存失败");
+			logger.error(e.getMessage());
+		} 
+		respData.setRt(rt);
+		return respData;
+	}
+
+	@Override
+	public RespData del(String ids) {
+		Rt rt = new Rt("000000", "删除成功！");
+		RespData respData = new RespData();
+		
+		try {
+			if (ids == null) {
+				respData.setRt(rt);
+				return respData;
+			}
+			String[] idArr = ids.split(",");
+			appgroupDao.delByIds(idArr);
+			
+		} catch (Exception e) {
+			rt.setCode("100002");
+			rt.setMsg("删除失败");
+			logger.error(e.getMessage());
+		} 
+		respData.setRt(rt);
+		return respData;
+	}
+
+}

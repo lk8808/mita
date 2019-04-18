@@ -1,0 +1,12 @@
+package com.tr.ibs.comm.service;
+
+import java.util.List;
+
+import com.tr.ibs.comm.model.Dict;
+
+public interface IDictService {
+
+	public List<Dict> queryDictsByDicttypeid(String dicttypeid);
+	
+	public Dict getDict(String dicttypeid, String dictid);
+}

@@ -1,0 +1,5 @@
+package com.tr.ibs.portal.service;
+
+public interface IAppgroupService {
+
+}

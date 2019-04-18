@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>用户列表</title>
+        <script type="text/javascript" src="/javascript/comm.js"></script>
+    </head>
+    <body>
+        <table id="datagrid">
+        </table>
+        <!-- 工具栏 -->
+        <div id="toolbar" style="padding:5px;height:auto">
+            <table>
+                <tr>
+                    <td>用户名：</td>
+                    <td>
+                        <input id="username_q" class="easyui-textbox">
+                    </td>
+                    <td>联系电话：</td>
+                    <td>
+                        <input id="telephone_q" class="easyui-textbox">
+                    </td>
+                    <td align="center">
+                        <a href="javascript:query();" class="easyui-linkbutton" data-options="iconCls:'icon-search'" >查询</a>
+                    </td>
+                </tr>
+            </table>
+		    <div>
+	            <a href="javascript:add()" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:'true'" >新增</a>
+	            <a href="javascript:edit()" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:'true'">修改</a>
+	            <a href="javascript:del()" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:'true'" >删除</a>
+            </div>
+        </div>
+        
+        <div id="editTab" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px;"
+             data-options="closed:true,modal:true,buttons:'#editTabBtns'">
+            <form id="dataForm" method="post" style="padding:10px 20px 10px 40px;">
+                <input type="hidden" id="id" name="id" >
+                <table >
+                    <tr>
+                        <td>用户名：</td>
+                        <td>
+                            <input name="username" class="easyui-textbox">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>性别：</td>
+                        <td>
+                            <input name="gender" class="easyui-combobox dict"
+                                data-options="dicttypeid:'comm_gender',panelHeight:100">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>是否：</td>
+                        <td>
+                            <input class="easyui-combobox dict"
+                                data-options="dicttypeid:'comm_yesorno',panelHeight:100">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>联系电话：</td>
+                        <td>
+                            <input name="telephone" class="easyui-textbox">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>邮箱：</td>
+                        <td>
+                            <input name="email" class="easyui-textbox">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div id="editTabBtns">
+            <a href="javascript:save()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+            <a href="javascript:$('#editTab').dialog('close')" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">取消</a>
+        </div>
+    </body>
+    <script type="text/javascript">
+        
+        $(function(){
+        	$("#datagrid").datagrid({
+        		url:'/user/queryUsersByPage',
+        		loader: datagrid_loader,
+        		pagination:true,
+        		pageSize:20,
+                pageNumber:1,
+                toolbar:'#toolbar',
+                loadMsg:'加载中...',
+                fit:true,
+                columns:[[
+                    {field:'id', checkbox:true},
+                    {field:'username', title: '用户名'},
+                    {field:'telephone', title: '联系电话'},
+                    {field:'email', title: '邮箱'},
+                    {field:'createtime', title: '创建时间',
+                    	formatter: function(value, row, index) {
+                    		return formatDate(value, 'yyyy-MM-dd hh:mm:ss');
+                    	}
+                    },
+                    {field:'creator', title: '创建人'}
+                ]]
+        	});
+        });
+        
+        //查询
+        function query() {
+        	$("#datagrid").data().datagrid.cache = null;
+        	$('#datagrid').datagrid('load',{
+        		username: $('#username_q').val(),
+        		telephone: $('#telephone_q').val()
+            });
+        }
+        //新增用户
+        function add() {
+        	$("#editTab").dialog("open").dialog('setTitle','新增用户');
+        	$("#dataForm").form("clear");
+        	$("#dataForm").url = "/user/add";
+        }
+        //编辑用户
+        function edit() {
+        	var row = $('#datagrid').datagrid('getSelected');
+        	if (!row) {
+        		alert("请选中一条记录");
+        		return;
+        	}
+       		$("#editTab").dialog("open").dialog('setTitle','编辑用户');
+            $("#dataForm").form('load',row);
+            $("#dataForm").url = "/user/edit";	
+        }
+        //删除用户
+        function del() {
+        	$.messager.progress();
+        }
+    </script>
+</html>

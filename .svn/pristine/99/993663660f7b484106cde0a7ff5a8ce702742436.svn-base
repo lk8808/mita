@@ -1,0 +1,23 @@
+package com.tr.ibs.portal.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.tr.ibs.portal.dao.AppgroupDao;
+import com.tr.ibs.portal.model.Appgroup;
+import com.tr.ibs.portal.service.IAppgroupService;
+
+@Service
+public class AppgroupServiceImpl implements IAppgroupService {
+	
+	@Autowired
+	private AppgroupDao appgroupDao;
+
+	@Override
+	public List<Appgroup> queryAppgroups() {
+		return appgroupDao.queryAllList();
+	}
+
+}

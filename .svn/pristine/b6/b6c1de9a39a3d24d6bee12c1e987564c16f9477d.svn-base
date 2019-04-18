@@ -1,0 +1,66 @@
+package com.tr.ibs.portal.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tr.ibs.portal.dao.MenuDao;
+import com.tr.ibs.portal.model.Menu;
+import com.tr.ibs.portal.service.IMenuService;
+
+@Service
+@Transactional
+public class MenuServiceImpl implements IMenuService {
+
+	Logger logger = LoggerFactory.getLogger(MenuServiceImpl.class);
+	
+	@Autowired
+	private MenuDao menuDao;
+
+	@Override
+	public List<Menu> queryMenusLevel1() {
+		return menuDao.queryMenusLevel1();
+	}
+
+	@Override
+	public List<Menu> queryMenusByParentid(String parentid) {
+		return menuDao.queryMenusByParentid(parentid);
+	}
+
+	@Override
+	public List<Map<String, Object>> getMenuTree(String parentid) {
+		List<Map<String, Object>> nodes = new ArrayList<Map<String, Object>>();
+		List<Menu> menus = null;
+		//
+		if (parentid == null || "".equals(parentid) || "0".equals(parentid)) {
+			menus = menuDao.queryMenusLevel1();
+		} else {
+			menus = menuDao.queryMenusByParentid(parentid);
+		}
+		for (Menu menu : menus) {
+			Map<String, Object> node = new HashMap<String, Object>();
+			Map<String, Object> attributes = new HashMap<String, Object>();
+			attributes.put("id", menu.getId());
+			attributes.put("menuurl", menu.getMenuurl());
+			node.put("id", menu.getId());
+			node.put("text", menu.getMenuname());
+			node.put("attributes", attributes);
+			List<Map<String, Object>> children = this.getMenuTree(String.valueOf(menu.getId()));
+			if (children != null && children.size() > 0) {
+				node.put("state", "closed");
+				node.put("children", children);
+			}
+			nodes.add(node);
+		}
+		
+		return nodes;
+	}
+	
+}

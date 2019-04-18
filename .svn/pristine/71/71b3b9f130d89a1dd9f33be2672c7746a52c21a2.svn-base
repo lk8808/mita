@@ -1,0 +1,25 @@
+package com.tr.ibs.portal.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.tr.ibs.base.IBaseDao;
+import com.tr.ibs.portal.model.Role;
+
+@Mapper
+public interface RoleDao extends IBaseDao<Role> {
+
+	public List<Role> queryRolesByAppid(String appid);
+	
+	public List<Role> querySubRolesByParentidWithPage(Map<String, Object> params);
+	
+	public Integer countSubRolesByParentid(Map<String, Object> params);
+	
+	public List<Role> querySubRolesByAppidWithPage(Map<String, Object> params);
+	
+	public Integer countSubRolesByAppid(Map<String, Object> params);
+	
+	public int deleteBatch(String[] ids);
+}

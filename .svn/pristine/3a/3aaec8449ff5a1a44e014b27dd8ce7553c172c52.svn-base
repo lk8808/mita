@@ -1,0 +1,38 @@
+package com.tr.ibs.org.service.impl;
+
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tr.ibs.entity.RespData;
+import com.tr.ibs.entity.Rtsts;
+import com.tr.ibs.org.dao.PositionDao;
+import com.tr.ibs.org.service.IPositionService;
+
+@Service
+@Transactional
+public class PositionServiceImpl implements IPositionService {
+	
+	Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private PositionDao positionDao;
+
+	@Override
+	public RespData queryPositions(Map<String, Object> params) {
+		RespData respData = new RespData(new Rtsts("000000", "查询成功！"));
+		//设置分页
+		int page = (int)params.get("page");
+		int rows = (int)params.get("rows");
+		params.put("begin", (page-1)*rows);
+		respData.setRtdata("rows", positionDao.queryListWithPage(params));
+		respData.setRtdata("total", positionDao.count(params));
+		
+		return respData;
+	}
+
+}

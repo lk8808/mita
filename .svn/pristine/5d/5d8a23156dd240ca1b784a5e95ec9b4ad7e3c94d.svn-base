@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	  	<meta charset="UTF-8">
+	    <title>微信后台管理系统</title>
+	    <script type="text/javascript" src="/javascript/comm.js"></script>
+		<link rel="stylesheet" type="text/css" href="/css/main.css">
+	</head>
+	<!--1. 在整个页面创建布局面板-->
+	<body class="easyui-layout" data-options="fit:true">
+	    <!--1.1 egion="north"，指明高度，可以自适应-->
+        <div data-options="region:'north',split:false" class="main_header">
+	        <div class="leftlogo">
+	            <!-- <div class="logoimg"></div> -->
+	            <div class="titlename">综合管理平台</div>
+	        </div>
+	        
+	        <div class="" id="appnavpanel" >
+			    <span class="navleftarrow"></span>
+		        <div>
+		            <!--右上方app导航条（中间主体）-->
+		            <ul class="" id="appnavcontent">
+		            </ul>
+		        </div >
+		        <!--右上方app导航条（右放箭头）-->
+			    <span class="navrightarrow"></span>
+		    </div>
+		    
+<!-- 		    <div id="allapppanel" class="easyui-panel" title="Basic Panel"  data-options="closed:true" style="width:700px;height:40px;padding:1px;"> -->
+<!-- 			</div> -->
+			
+	        <div class="rightop">
+	        	<a href="javascript:void(0)"  class="easyui-menubutton" data-options="iconCls:'fa fa-user fa-fw ',hasDownArrow:false" style="color:#fff">
+	        		<span id ="username"></span>
+	        	</a>|
+				<a href="javascript:void(0)" class="easyui-menubutton" data-options="iconCls:'fa fa-cog fa-fw ',menu:'#sys-sets'" style="color:#fff">设置</a>|
+				<a href="javascript:void(0)" onclick="logout()" class="easyui-menubutton" data-options="iconCls:'fa fa-sign-out fa-fw ',hasDownArrow:false" style="color:#fff">注销</a>
+				<div id="sys-sets" style="width:80px;">
+					<div data-options="iconCls:'fa fa-info-circle'" >个人信息</div>
+				    <div data-options="iconCls:'fa fa-key'" >修改密码</div>
+			    </div>
+	        </div>
+	    </div>
+	    
+	    <!--1.2 region="west",必须指明宽度-->
+	    <div  data-options="region:'west',split:true,iconCls:'menuicon'"  title="功能菜单" style="width:200px;" >
+	        <div id="RightAccordion" class="easyui-accordion">
+	        
+	        </div>
+        </div>
+	    
+	    <!--1.3region="center",这里的宽度和高度都是由周边决定，不用设置-->
+	    <div data-options="region:'center'" style="background:#eee;">
+	        <div id="menuTab" class="easyui-tabs" data-options="fit:true,border:false,tools:'#tab-tools'" style="padding-top: 0px;">
+ 			    <div title="主页" id="homepanel" data-options="iconCls:'homeicon',selected:true"  style="padding:1px;overflow:hidden;"> 
+			    </div>
+		    </div>
+		    <div id="rcmenu" class="easyui-menu" style="">    
+			    <div id="close">关闭</div>   
+			    <div id="closeother">关闭其他</div>  
+	            <div id="closeall">关闭全部</div>      
+        	</div>
+	    </div>
+	    <div id="tab-tools">
+			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'fa fa-home fa-fw'" onclick="gohomePanel()"></a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'fa fa-refresh fa-fw'" onclick="refreshPanel()"></a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'fa fa-remove fa-fw'" onclick="removePanel()"></a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'fa fa-arrows-alt fa-fw'" onclick="screenExpand()"></a>
+		</div>
+	    
+	    <!--1.4 region="east",必须指明宽度-->
+	    <!-- 
+	    <div region="east"  style="width:100px;">页面右侧</div>
+	     -->
+	    
+	    <!--1.5 region="south"，指明高度，可以自适应-->
+	    <div data-options="region:'south',split:false" class="main_footer" >
+	            <p>Copyright &copy; 上海同儒信息技术有限公司</p>
+        </div>
+        
+		<div id="allappwin">
+			<div>
+	            <ul class="" id="allappcontent">
+	            </ul>
+            </div >
+		</div>
+	
+	</body>
+	<script type="text/javascript">
+		var userInfo = {};
+		var firstappid ;
+		var headleftwidth=($("#appnavpanel").prev()).width();
+		var headrightwidth=($("#appnavpanel").next()).width();
+		//设置应用导航上级DIV宽度
+		var appnum = Math.max(parseInt(($(window).width()-headleftwidth-headrightwidth-75) /100)-2,1) ;
+		//选中的应用id
+		var selectappindexid = -2;
+					
+	    $(function(){
+	    	//加载用户信息
+	    	$.ajax({
+                url: "/base/getSession",
+                type: "POST",
+                success: function(retData) {
+                	if (retData.rtsts && retData.rtsts.code=="000000") {
+                		userInfo.username=retData.rtdata.userObject.user.username ;
+                        $('#username').text(userInfo.username);
+                        //获取应用数据
+                        initAppData();
+                	}
+                },
+                error: function (xhr, rtmsg, e) { 
+                }
+            });
+	            
+	        //tabs绑定右键菜单
+			initTabsMenu();
+			//初始化首页
+			initHomePage();
+			
+	    });
+	    
+	    function initHomePage(){
+// 	    	var content = '<iframe frameborder="0" src="' + menuurl + '"style="width:100%;height:100%;display:block;"></iframe>';
+// 	    	content:"<iframe src=\'./portal/menu/menu_mgr.html\'  frameborder=\'0\' style=\'width:100%;height:100%;\'></iframe>"
+	    	$('#homepanel').panel({
+	    		content:"<iframe src='home.html' scrolling='yes' frameborder='0' style='width:100%;height:100%;'></iframe>"
+	    	});
+	    }
+	    
+	    //获取应用数据
+	    function initAppData(){
+	    	$.ajax({
+				url: "/application/queryAllAuthList",
+				type: "POST",
+				success: function(retData)
+				{
+					headleftwidth=($("#appnavpanel").prev()).width();
+					headrightwidth=($("#appnavpanel").next()).width();
+					//设置应用导航上级DIV宽度
+					appnum = Math.max(parseInt(($(window).width()-headleftwidth-headrightwidth-75) /100)-2,1) ;
+					if(retData.length>0){
+						var appshtml="";
+						$.each(retData, function(index, obj) {
+							if(index==0){
+								//初始化菜单
+								//设置第一个应用为首个应用
+								firstappid=obj.id;
+								//获取首个应用的菜单数据
+								//getMenuData(firstappid);
+			    				initMenu(firstappid);
+							}
+							if(index<appnum){
+								var imgurl=obj.bigicon||'';
+								if(imgurl=='')
+								{
+								    imgurl="/img/main/application.png";
+								}
+								else
+								{
+								    imgurl=imageUrlUtil(imgurl);
+								}
+								appshtml+='<li appid="'+obj.id+'" indexid="'+index+'" active="false" onmouseover="appAddHighLight(this);"  onmouseout="appRemoveHighLight(this);" onclick="selectedAppClick(this);"> <img src="'+imgurl+'"/><span>'+obj.appname+'</span></li>';
+							}
+						});
+						
+						if(retData.length>=appnum){
+							appshtml+='<li appid="'+0+'" indexid="-1" active="false" onmouseover="appAddHighLight(this);"  onmouseout="appRemoveHighLight(this);" onclick="selectedAppClick(this);"> <img src="/img/main/application.png"/><span>其他应用</span></li>';
+						}
+						
+						$("#appnavcontent").html(appshtml);
+						
+						appnavPanelReset();
+						
+						$('#allappwin').window({
+						    width:(appnum+1)*100+30,
+// 							width:330,
+						    height:200,
+						    left:headleftwidth+30-2,
+						    top:60,
+						    modal:false,
+						    noheader:true,
+						    closed:true,
+						    draggable:true
+						});
+						
+						document.getElementById("allappwin").addEventListener("mouseleave", function () {
+							$('#allappwin').window('close');
+						},false);
+						
+						var appshtml="";
+						$.each(retData, function(index, obj) {
+							if(index>=appnum){
+								var imgurl=obj.bigicon||'';
+								if(imgurl=='')
+								{
+								    imgurl="/img/main/application.png";
+								}
+								else
+								{
+								    imgurl=imageUrlUtil(imgurl);
+								}
+								appshtml+='<li appid="'+obj.id+'" indexid="'+index+'" active="false" onmouseover="appAddHighLight(this);"  onmouseout="appRemoveHighLight(this);" onclick="selectedAppClick(this);" > <img src="'+imgurl+'"/><span>'+obj.appname+'</span></li>';
+							}
+						});
+						$('#allappcontent').html(appshtml);
+						
+						var allapps=$("#appnavpanel ul li");
+						for(var i=0,l=allapps.length;i<l;i++)
+						{
+						    //如果应用为首个应用
+							if(allapps[i].getAttribute("indexid")==0)
+							{
+							    //设置应用为激活样式
+								$(allapps[i]).addClass("appMenuActive");	
+								$(allapps[i]).attr("active",true);
+							}
+						}
+						
+					}
+				}
+			});
+	    }
+	    
+	    /*
+		 * 图标URL处理函数
+		 */
+		function imageUrlUtil(url)
+		{
+		    var murl=url.replace(/\\/g,"/");
+		    if(murl.indexOf("http")!=0)
+		    {
+	    		if(murl.indexOf("/")==0)
+	    		{
+	        		if(murl.indexOf(nui.context)!=0)
+	        		{
+	        			murl = contextPath + murl;
+	        		}
+	    		}
+	    		else
+	    		{
+	    			murl = contextPath +"/"+ murl;
+	    		}
+	    	}
+	    	return murl;
+		}
+	
+		/*
+		 * 设置导航栏样式
+		 */
+		function appnavPanelReset()
+		{
+			$(".navleftarrow").css("visibility","visible");
+			$(".navrightarrow").css("visibility","visible");
+			 //获取所有应用列表
+			var allapplis=$("#appnavcontent li");
+	        //获取logo、名字所在div宽度
+			var headleftwidth=($("#appnavpanel").prev()).width();
+			var headrightwidth=($("#appnavpanel").next()).width();
+			//设置应用导航上级DIV宽度
+			$("#appnavcontent").parent().css("width",$(window).width()-headleftwidth-headrightwidth-75);
+			//设置左边箭头所在div向右移动距离
+			$("#appnavpanel").css("left",(headleftwidth+5));
+			//获取滚动面板宽度
+			var panelwidth=$("#appnavcontent").parent().width();  
+			//获取所有应用的左右空白之和 
+			// 每个应用初始化加宽10 
+			__appnavwidth=0;
+			for(var i=0,l=allapplis.length;i<l;i++)
+			{
+				var marginl=parseInt($(allapplis[i]).css("marginLeft"));
+				var marginr=parseInt($(allapplis[i]).css("marginRight"));
+				marginl=(isNaN(marginl)?0:marginl)+(isNaN(marginr)?0:marginr);
+				__appnavwidth=__appnavwidth+(allapplis[i].offsetWidth+10)+marginl;
+			}
+			
+			if(__appnavwidth<=panelwidth)
+			{
+				$("#appnavcontent").css("left",0);
+				$(".navleftarrow").css("visibility","hidden");
+				$(".navrightarrow").css("visibility","hidden");
+			}
+			var leftnum=parseInt($("#appnavcontent").css("left"));	
+			if((__appnavwidth+leftnum<=panelwidth))
+			{
+				$(".navrightarrow").css("visibility","hidden");
+			}
+			
+			if(leftnum>=0 )
+			{
+				$(".navleftarrow").css("visibility","hidden");
+			}
+		}
+		
+		//左箭头事件响应
+		$(".navleftarrow").click(function()
+		{
+		    var contentpanel=$("#appnavcontent");
+		  	var leftnum=parseInt(contentpanel.css("left"));
+		  	var pwidth=contentpanel.parent().width();
+		  	leftnum+=(pwidth*0.8);
+		  	if(leftnum>=0)
+		  	{
+		  		leftnum=0;
+		  		$(this).css("visibility","hidden");
+		  	}
+		  	$(".navrightarrow").css("visibility","visible");
+		  	contentpanel.animate({left:leftnum},700);
+		  	
+		});
+		
+		//右箭头事件响应
+		$(".navrightarrow").click(function()
+		{
+		  	var contentpanel=$("#appnavcontent");
+		  	var leftnum=parseInt(contentpanel.css("left"));
+		  	var pwidth=contentpanel.parent().width();
+		  	leftnum-=(pwidth*0.8);
+		  	if((leftnum+(0-pwidth))<=(0-__appnavwidth)){
+		  		leftnum=-(__appnavwidth-(pwidth*0.7));
+		  		$(this).css("visibility","hidden");
+		  	}
+		  	$(".navleftarrow").css("visibility","visible");
+		  	contentpanel.animate({left:leftnum},700);
+		});
+		
+		//添加app导航高亮
+		function appAddHighLight(t){
+			$(t).addClass("appHighLight");
+			if($(t).attr("indexid")<appnum){
+				if($(t).attr("appid")==0){
+					$('#allappwin').window('open');
+				}else{
+					$('#allappwin').window('close');
+				}
+			}
+		}
+		
+		//移除app导航高亮
+		function appRemoveHighLight(t){
+			$(t).removeClass("appHighLight");
+			if($(t).attr("indexid")<appnum){
+				if(selectappindexid!=-1&&selectappindexid<appnum){
+					$('#allappwin').window('close');
+				}
+			}
+		}
+		
+		//应用选择处理方法
+		function selectedAppClick(appele){
+			selectappindexid = $(appele).attr("indexid");
+			$("#appnavpanel ul li").each(function(){
+				if($(this).attr("appid")!=0){
+					$(this).removeClass("appMenuActive");
+			    	$(this).attr("active",false);
+				}else{
+					if($(appele).attr("indexid")<appnum){
+						$(this).removeClass("appMenuActive");
+			    		$(this).attr("active",false);
+					}
+				}
+			});
+			if(selectappindexid!=-1){
+				$("#allappwin ul li").each(function(){
+				    $(this).removeClass("appMenuActive");
+				    $(this).attr("active",false);
+				});
+			}
+			
+			if(appele){
+				$(appele).addClass("appMenuActive");	
+				$(appele).attr("active",true);
+				if(selectappindexid!=-1){
+					initMenu($(appele).attr("appid"));
+				}
+			}
+		    
+		    //增加记录日志
+// 		    setRecordlog(appid,"app");
+			if(selectappindexid==-1){
+				$('#allappwin').window('open');
+			}else{
+				$('#allappwin').window('close');
+			}
+		}
+		
+		// 记录应用日志
+		function setRecordlog(recordid,retype){
+		   $.ajax({
+				url: "com.portal.biz.recordlog.recordlogCom.addRecordlog.biz.ext",
+				type: "POST",
+				data: "recordid="+recordid+"&retype="+retype,
+				success: function(text)
+				{
+				    //alert(text.rtCode);
+				    var rtCode = text.rtCode;
+					if(rtCode=="-1")
+					{
+					   alert("用户登录已超时,请重新登录!");
+					   window.location.href="<%=request.getContextPath()%>/index2.jsp"; 
+					}
+				} 
+			});
+		}
+	    
+	    //初始化菜单
+	    function initMenu(appid) {
+	    	var panels = $("#RightAccordion").accordion("panels");
+	    	for(var i = panels.length-1 ;i>=0;i--){
+	    		var panel=panels[i];
+	            $('#RightAccordion').accordion('remove',  panel.panel('options').title);
+	    	}
+	    	//初始化手风琴面板
+            $("#RightAccordion").accordion({ 
+                fillSpace:true,
+                border:false,
+                animate:true  ,
+                fit:true,
+                multiple:false
+            });
+	    	$.ajax({
+                url: "/menu/queryAuthMenusLevel1ByAppid",
+                type: "POST",
+                data: {appid: appid},
+                success: function (retData) {
+                    //一级菜单使用手风琴
+                    $.each(retData, function(index, obj) {
+                        $('#RightAccordion').accordion('add', {
+                            id: "menuPanel" + obj.id,
+                            title: obj.menuname,
+                            content: "<ul id='tree" + obj.id + "'></ul>",
+                            heightStyle :'content',
+                            selected: false
+                        });
+                        //后面多级菜单使用树结构
+                        $.ajax({
+                            url: "/menu/getMenuTree",
+                            type: "POST",
+                            data: {parentid: obj.id},
+                            success: function(retData) {
+                                $("#tree" + obj.id).tree({
+                                    data: retData,
+                                    animate: true,
+                                    onClick : function(node){  
+                                    	$("#tree" + obj.id).tree("toggle", node.target);
+                                        if (node.attributes.menuurl) {
+                                            //打开菜单
+                                            openMenu(node.text, node.attributes.menuurl);
+                                        }
+                                    }
+                                });
+                                $(".tree-icon").remove();
+                            },
+                            error: function (xhr, rtmsg, e) { 
+                            }
+                        });
+                    });
+                },
+                error: function (xhr, rtmsg, e) { 
+                }
+            });
+	    }
+	    //初始化tab右键菜单
+	    function initTabsMenu() {
+	    	//绑定右键菜单
+	    	$("#menuTab").tabs({
+	    		onContextMenu: function(e, title, index) {
+	    			e.preventDefault();
+	    			$('#rcmenu').menu('show', {  
+	                    left: e.pageX,  
+	                    top: e.pageY  
+	                }); 
+	    			$("#menuTab").tabs("select", index);
+	    		}
+	    	});
+	    	//关闭全部
+	    	$("#closeall").bind("click", function() {
+	    		var tablist =$('#menuTab').tabs('tabs');
+	    		for(var i=tablist.length-1;i>=1;i--){  
+                    $('#menuTab').tabs('close',i);  
+                }  
+	    	});
+	    	//关闭其他
+            $("#closeother").bind("click", function() {
+                var tablist =$('#menuTab').tabs('tabs');
+                var tab = $('#menuTab').tabs('getSelected');  
+                var index = $('#menuTab').tabs('getTabIndex',tab); 
+                for(var i=tablist.length-1;i>index;i--){  
+                    $('#menuTab').tabs('close',i);  
+                } 
+                var num = index-1;                  
+                if(num < 1){                    
+                	return;                 
+                } else {                      
+                    for(var i=num;i>=1;i--) {                        
+                    	$('#menuTab').tabs('close',i);                     
+                    }                                
+                }  
+            });
+            //关闭当前
+            $("#close").bind("click", function() {
+                var tablist =$('#menuTab').tabs('tabs');
+                var tab = $('#menuTab').tabs('getSelected');  
+                var index = $('#menuTab').tabs('getTabIndex',tab); 
+                if(index>0){
+                	$('#menuTab').tabs('close',index);  
+                }
+            });
+	    }
+	    
+	    //打开菜单
+	    function openMenu(title, menuurl) {
+	    	if ($("#menuTab").tabs('exists', title)) {
+	    		$('#menuTab').tabs('select', title);
+	    		return;
+	    	} 
+	    	//menuurl = "http://www.baidu.com";
+	    	var content = '<iframe frameborder="0" src="' + menuurl + '"style="width:100%;height:100%;display:block;"></iframe>';
+	    	$("#menuTab").tabs('add', {
+	    		title: title,
+	    		content: content,
+	    		closable: true
+	    	});
+	    	
+	    }
+		
+		//注销用户
+	    function logout() {
+	    	$.messager.confirm('注销确认','你是否注销用户？',function (r) {
+	    		if(r){
+	    			$.ajax({
+		                url: "/login/logout",
+		                type: "POST",
+		                success: function(retData) {
+		                	window.location.href = "/view/login.html";
+		                },
+		                error: function (xhr, rtmsg, e) { 
+		                	$.messager.alert("消息", "注销失败");
+		                }
+		            });
+	    		}
+        	})
+	    }
+	    
+	    
+var isFullScreen = false;
+
+var App = function () {
+    var setFullScreen = function () {
+        var docEle = document.documentElement;
+        if (docEle.requestFullscreen) {
+            //W3C
+            docEle.requestFullscreen();
+        } else if (docEle.mozRequestFullScreen) {
+            //FireFox
+            docEle.mozRequestFullScreen();
+        } else if (docEle.webkitRequestFullScreen) {
+            //Chrome等
+            docEle.webkitRequestFullScreen();
+        } else if (docEle.msRequestFullscreen) {
+            //IE11
+            docEle.msRequestFullscreen();
+        } else {
+            $.iMessager.alert('温馨提示', '该浏览器不支持全屏', 'messager-warning');
+        }
+    };
+
+    //退出全屏 判断浏览器种类
+    var exitFullScreen = function () {
+        // 判断各种浏览器，找到正确的方法
+        var exitMethod = document.exitFullscreen || //W3C
+            document.mozCancelFullScreen ||    //Chrome等
+            document.webkitExitFullscreen || //FireFox
+            document.msExitFullscreen; //IE11
+        if (exitMethod) {
+            exitMethod.call(document);
+        }
+        else if (typeof window.ActiveXObject !== "undefined") {//for Internet Explorer
+            var wscript = new ActiveXObject("WScript.Shell");
+            if (wscript !== null) {
+                wscript.SendKeys("{F11}");
+            }
+        }
+    };
+
+    return {
+        init: function () {
+
+        },
+        handleFullScreen: function () {
+            if (isFullScreen) {
+                exitFullScreen();
+                isFullScreen = false;
+            } else {
+                setFullScreen();
+                isFullScreen = true;
+            }
+        }
+    };
+};
+
+	    //窗口改变事件响应
+		window.onresize = function(){
+			appnavPanelReset();
+		};
+		
+		//回到主页	
+		function gohomePanel(){
+			 $('#menuTab').tabs('select', 0);
+		}
+		
+		//刷新本页
+		function refreshPanel(){
+			var refresh_tab = $('#menuTab').tabs('getSelected');
+            var refresh_iframe = refresh_tab.find('iframe')[0];
+            refresh_iframe.contentWindow.location.href = refresh_iframe.src;
+		}
+		
+		//关闭本页
+		function removePanel(){
+			var index = $('#menuTab').tabs('getTabIndex', $('#menuTab').tabs('getSelected'));
+            var tab = $('#menuTab').tabs('getTab', index);
+            if (tab.panel('options').closable) {
+                $('#menuTab').tabs('close', index);
+            }
+		}
+		
+		//屏幕最大
+		function screenExpand(){
+			App().handleFullScreen();	
+		}
+		
+	
+		
+	</script>
+</html>
+

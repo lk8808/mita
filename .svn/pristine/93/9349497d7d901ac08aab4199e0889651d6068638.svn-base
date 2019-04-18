@@ -1,0 +1,143 @@
+/**
+ * 公共js
+ */
+
+
+/**
+ * ajax全局处理
+ * 	当session过期时跳转至登陆页面
+ */
+$(function(){
+    $.ajaxSettings.complete = function(xhr, status){
+    	var retData = xhr.responseText;
+    	if (retData) {
+    		retData = eval('(' + retData + ')');
+        	if (retData.rtsts && retData.rtsts.code) {
+        		if (retData.rtsts.code == '000009') {
+        			if (window.parent) {
+        				window.parent.location.href = '/view/login.html';
+        				return;
+        			} 
+        			window.location.href = '/view/login.html';
+        		}
+        	}
+    	}
+    }
+});
+
+/**
+ * 自定义唯一校验
+ */
+$.extend($.fn.validatebox.defaults.rules, {   
+    unique: {   
+        validator: function(value, param){   
+        	var id = $("#id").val() || 0;
+        	var params = {};
+        	$.each(param, function(index, tmp){
+        		params[tmp] = $('#' + tmp).val() || $("input[name='" + tmp + "']").val();
+        	});
+        	params.id = id;
+        	var flag = false;
+        	$.ajax({
+        		url: _UNIQUE_URL,
+        		async: false,
+                type: "POST",
+                data: params,
+                success: function(retData) {
+                    flag = retData
+                },
+                error: function (xhr, rtmsg, e) { 
+                }
+        	});
+            return flag;   
+        },   
+        message: '当前字段值已存在'  
+    }   
+});
+
+
+/**
+ * 数据字典初始化
+ */
+$(function() {
+	$(".dict").combobox({
+		loader: dict_loader,
+		valueField: 'dictid',
+		textField: 'dictname'
+	});
+});
+
+/**
+ * 数据字典查询加载器
+ * @param params
+ * @param success
+ * @param error
+ */
+function dict_loader(params, success, error) {
+	var that = $(this);  
+    var opts = that.combobox("options");  
+    var dicttypeid = opts.dicttypeid;
+    $.ajax({  
+        url: '/dict/queryDictsByDicttypeid',  
+        type: "POST",  
+        data: {dicttypeid: dicttypeid}, 
+        success: function(retData) {  
+            success(retData);
+        },  
+        error: function(xhr, rtmsg, e) { 
+        } 
+    });  
+}
+
+/**
+ * 数据字典转换
+ * 使用方法：
+ * 	1、在datagrid的columns子元素属性中添加 dicttypeid 属性
+ * 	2、设置columns子元素属性的formatter 为 dict_formatter
+ */
+function dict_formatter(value, rowData, rowIndex) {
+	var that = this;
+	if (that.dicttypeid) {
+		$.ajax({  
+	        url: '/dict/getDict',  
+	        type: "POST",  
+	        async: false,
+	        data: {
+	        	dicttypeid: that.dicttypeid,
+	        	dictid: value
+	        }, 
+	        success: function(retData) {  
+	            value = retData.dictname;
+	        }
+	    }); 
+	} 
+	return value;
+}
+
+/**
+ * 引用实体id转换
+ * 描述：用于引用实体的展示
+ * 使用方法：
+ * 	1、在datagrid的columns子元素属性中添加 
+ * 	   url(用于查询引用实体)、refname(引用实体的展示属性)、params(查询参数，非必须项，如果有除id额外的参数时使用)
+ * 	2、设置columns子元素属性的formatter 为 datagrid_ref_formatter
+ */
+function datagrid_ref_formatter(value, rowData, rowIndex) {
+	var that = this;
+	var url = that.url;
+	var refname = that.refname;
+	var params = that.params || {};
+	params.id = value || 0;
+	$.ajax({  
+        url: url,  
+        type: "POST",  
+        async: false,
+        data: params, 
+        success: function(retData) {  
+            value = retData[refname];
+        }
+    }); 
+	return value;
+}
+
+

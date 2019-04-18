@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	  	<meta charset="UTF-8">
+	    <title>微信后台管理系统</title>
+	    <script type="text/javascript" src="/javascript/comm.js"></script>
+		<link rel="stylesheet" type="text/css" href="/css/main.css">
+	</head>
+	<!--1. 在整个页面创建布局面板-->
+	<body class="easyui-layout" data-options="fit:true">
+	    <!--1.1 egion="north"，指明高度，可以自适应-->
+        <div data-options="region:'north',split:true" class="main_header">
+	        <div class="leftlogo">
+	            <div class="logoimg"></div>
+	            <div class="titlename">微信后台管理系统</div>
+	        </div>
+	        <div class="rightop">
+	            <div><a class="login-out" href="#" onclick="logout();" >注销</a></div>
+	            <div>当前用户：admin</div>
+	        </div>
+	    </div>
+	    
+	    <!--1.2 region="west",必须指明宽度-->
+	    <div data-options="region:'west',split:true" title="功能菜单" style="width:200px" >
+	        <div id="RightAccordion" class="easyui-accordion">
+	        
+	        </div>
+        </div>
+	    
+	    <!--1.3region="center",这里的宽度和高度都是由周边决定，不用设置-->
+	    <div data-options="region:'center'" style="padding:5px;background:#eee;">
+	        <div id="menuTab" class="easyui-tabs" data-options="fit:true,border:false">
+			    <div title="主页" style="padding:10px;">
+			    </div>
+		    </div>
+		    <div id="rcmenu" class="easyui-menu" style="">    
+		    <div id="close">关闭</div>   
+		    <div id="closeother">关闭其他</div>  
+            <div id="closeall">关闭全部</div>      
+        </div>
+	    </div>
+	    <!--1.4 region="east",必须指明宽度-->
+	    <!-- 
+	    <div region="east"  style="width:100px;">页面右侧</div>
+	     -->
+	    
+	    <!--1.5 region="south"，指明高度，可以自适应-->
+	    <div data-options="region:'south',split:true" style="height:30px;">
+		    <center> 
+	            <p>Copyright &copy; 上海同儒信息技术有限公司</p>
+	        </center>
+        </div>
+	
+	</body>
+	<script type="text/javascript">
+	
+	    $(function(){
+	    	//初始化菜单
+	    	initMenu();
+	    	//tabs绑定右键菜单
+	    	initTabsMenu();
+	    });
+	    
+	    function initMenu() {
+	    	//初始化手风琴面板
+            $("#RightAccordion").accordion({ 
+                fillSpace:true,
+                border:false,
+                animate:true  
+            });
+	    	$.ajax({
+                url: "/menu/queryMenusLevel1",
+                type: "POST",
+                contentType: 'application/json;charset=utf-8',
+                success: function (retData) {
+                    //一级菜单使用手风琴
+                    $.each(retData, function(index, obj) {
+                        $('#RightAccordion').accordion('add', {
+                            id: "menuPanel" + obj.id,
+                            title: obj.menuname,
+                            content: "<ul id='tree" + obj.id + "'></ul>",
+                            heightStyle :'content',
+                            selected: false
+                        });
+                        //后面多级菜单使用树结构
+                        $.ajax({
+                            url: "/menu/getMenuTree",
+                            type: "POST",
+                            data: {parentid: obj.id},
+                            success: function(retData) {
+                                $("#tree" + obj.id).tree({
+                                    data: retData,
+                                    animate: true,
+                                    onClick : function(node){  
+                                    	$("#tree" + obj.id).tree("toggle", node.target);
+                                        if (node.attributes.menuurl) {
+                                            //打开菜单
+                                            openMenu(node.text, node.attributes.menuurl);
+                                        }
+                                    }
+                                });
+                                $(".tree-icon").remove();
+                            },
+                            error: function (xhr, rtmsg, e) { 
+                            }
+                        });
+                    });
+                },
+                error: function (xhr, rtmsg, e) { 
+                }
+            });
+	    }
+	    //初始化tab右键菜单
+	    function initTabsMenu() {
+	    	//绑定右键菜单
+	    	$("#menuTab").tabs({
+	    		onContextMenu: function(e, title, index) {
+	    			e.preventDefault();
+	    			$('#rcmenu').menu('show', {  
+	                    left: e.pageX,  
+	                    top: e.pageY  
+	                }); 
+	    			$("#menuTab").tabs("select", index);
+	    		}
+	    	});
+	    	//关闭全部
+	    	$("#closeall").bind("click", function() {
+	    		var tablist =$('#menuTab').tabs('tabs');
+	    		for(var i=tablist.length-1;i>=1;i--){  
+                    $('#menuTab').tabs('close',i);  
+                }  
+	    	});
+	    	//关闭其他
+            $("#closeother").bind("click", function() {
+                var tablist =$('#menuTab').tabs('tabs');
+                var tab = $('#menuTab').tabs('getSelected');  
+                var index = $('#menuTab').tabs('getTabIndex',tab); 
+                for(var i=tablist.length-1;i>index;i--){  
+                    $('#menuTab').tabs('close',i);  
+                } 
+                var num = index-1;                  
+                if(num < 1){                    
+                	return;                 
+                } else {                      
+                    for(var i=num;i>=1;i--) {                        
+                    	$('#menuTab').tabs('close',i);                     
+                    }                                
+                }  
+            });
+            //关闭其他
+            $("#close").bind("click", function() {
+                var tablist =$('#menuTab').tabs('tabs');
+                var tab = $('#menuTab').tabs('getSelected');  
+                var index = $('#menuTab').tabs('getTabIndex',tab); 
+                $('#menuTab').tabs('close',index);  
+            });
+	    }
+	    
+	    //打开菜单
+	    function openMenu(title, menuurl) {
+	    	if ($("#menuTab").tabs('exists', title)) {
+	    		$('#menuTab').tabs('select', title);
+	    		return;
+	    	} 
+	    	//menuurl = "http://www.baidu.com";
+	    	var content = '<iframe frameborder="0" src="' + menuurl + '"style="width:100%;height:100%;display:block;"></iframe>';
+	    	$("#menuTab").tabs('add', {
+	    		title: title,
+	    		content: content,
+	    		closable: true
+	    	});
+	    	
+	    }
+	
+	    function logout() {
+	    	
+	    }
+	</script>
+</html>
+

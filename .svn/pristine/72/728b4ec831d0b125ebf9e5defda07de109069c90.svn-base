@@ -1,0 +1,32 @@
+package com.tr.ibs.entity;
+
+import com.tr.ibs.org.model.User;
+
+public class UserObject {
+
+	private User user;
+	
+	private String sessionId;
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	@Override
+	public String toString() {
+		return "UserObject [user=" + user + ", sessionId=" + sessionId + "]";
+	}
+	
+}

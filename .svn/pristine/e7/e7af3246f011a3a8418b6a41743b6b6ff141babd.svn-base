@@ -1,0 +1,12 @@
+package com.tr.ibs.org.service.impl;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tr.ibs.org.service.IPositionService;
+
+@Service
+@Transactional
+public class PositionServiceImpl implements IPositionService {
+
+}

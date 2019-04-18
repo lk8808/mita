@@ -1,0 +1,84 @@
+/**
+ * 公共js
+ */
+
+
+/**
+ * datagrid 查询加载器
+ */
+function datagrid_loader(params, success, error) {
+	var that = $(this);  
+    var opts = that.datagrid("options");  
+    if (!opts.url) {  
+        return false;  
+    }  
+    var cache = that.data().datagrid.cache;
+    if (!cache) {  
+        $.ajax({  
+            url : opts.url,  
+            type : "POST",  
+            contentType: 'application/json;charset=utf-8',
+            dataType : "json",  
+            data: JSON.stringify(params), 
+            success: function (data) {  
+                that.data().datagrid['cache'] = data;  
+                success(bulidData(data));  
+            },  
+            error : function () {  
+                error.apply(this, arguments);  
+            }  
+        });  
+    } else {  
+        success(bulidData(cache));  
+    }  
+    
+    function bulidData(data) {  
+        var temp = $.extend({},data);  
+        var tempRows = [];  
+        var start = (params.page - 1) * parseInt(params.rows);  
+        var end = start + parseInt(params.rows);  
+        var rows = data;  
+        for (var i = start; i < end; i++) {  
+            if(rows[i]){  
+                tempRows.push(rows[i]);  
+            }else{  
+                break;  
+            }  
+        }  
+        temp.rows = tempRows;  
+        return temp;  
+    }  
+}
+
+/**
+ * 数据字典初始化
+ */
+$(function() {
+	$(".dict").combobox({
+		loader: dict_loader,
+		valueField: 'dictid',
+		textField: 'dictname'
+	});
+});
+
+/**
+ * 数据字典查询加载器
+ * @param params
+ * @param success
+ * @param error
+ */
+function dict_loader(params, success, error) {
+	var that = $(this);  
+    var opts = that.combobox("options");  
+    var dicttypeid = opts.dicttypeid;
+    $.ajax({  
+        url: '/dict/queryDictsByDicttypeid',  
+        type: "POST",  
+        data: {dicttypeid: dicttypeid}, 
+        success: function(retData) {  
+            success(retData);
+        },  
+        error: function(xhr, rtmsg, e) { 
+        } 
+    });  
+}

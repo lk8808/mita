@@ -1,0 +1,99 @@
+package com.tr.ibs.org.service.impl;
+
+import java.util.Date;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tr.ibs.entity.RespData;
+import com.tr.ibs.entity.Rtsts;
+import com.tr.ibs.entity.UserObject;
+import com.tr.ibs.org.dao.PositionDao;
+import com.tr.ibs.org.model.Position;
+import com.tr.ibs.org.service.IPositionService;
+
+@Service
+@Transactional
+public class PositionServiceImpl implements IPositionService {
+	
+	Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private PositionDao positionDao;
+	
+	@Autowired
+	private HttpSession session;
+	
+	@Override
+	public Position get(Integer id) {
+		return positionDao.get(id);
+	}
+
+	@Override
+	public RespData queryPositions(Map<String, Object> params) {
+		RespData respData = new RespData(new Rtsts("000000", "查询成功！"));
+		//设置分页
+		int page = (int)params.get("page");
+		int rows = (int)params.get("rows");
+		params.put("begin", (page-1)*rows);
+		respData.setRtdata("rows", positionDao.queryListWithPage(params));
+		respData.setRtdata("total", positionDao.count(params));
+		
+		return respData;
+	}
+
+	@Override
+	public RespData save(Position position) {
+		RespData respData = new RespData(new Rtsts("000000", "保存成功！"));
+		UserObject userObject = (UserObject)session.getAttribute("userObject");
+		try {
+			if (position.getId() != null && position.getId() > 0) {
+				position.setModifier(userObject.getUser().getUsername());
+				position.setModifytime(new Date());
+				positionDao.update(position);
+			} else {
+				position.setDelflag("0");
+				position.setCreator(userObject.getUser().getUsername());
+				position.setCreatetime(new Date());
+				positionDao.insert(position);
+			}
+		} catch (Exception e) {
+			respData.setRtsts(new Rtsts("100001", "保存失败！"));
+			logger.error(e.getMessage());
+		}	
+		return respData;
+	}
+
+	@Override
+	public RespData del(String ids) {
+		RespData respData = new RespData(new Rtsts("000000", "删除成功！"));
+		try {
+			if (ids != null) {
+				String[] idArr = ids.split(",");
+				positionDao.deleteBatch(idArr);
+			}
+		} catch (Exception e) {
+			respData.setRtsts(new Rtsts("100001", "删除失败！"));
+			logger.error(e.getMessage());
+		}	
+		return respData;
+	}
+
+	@Override
+	public boolean isUnique(Position position) {
+		int tmpId = position.getId();
+		position.setId(null);
+		Position tmp = positionDao.expand(position);
+		if (tmp != null && tmpId != tmp.getId()) {
+			return false;
+		}
+		return true;
+	}
+
+}

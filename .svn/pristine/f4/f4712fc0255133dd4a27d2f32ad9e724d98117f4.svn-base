@@ -1,0 +1,44 @@
+package com.tr.ibs.entity;
+
+public class Page {
+
+	private int page;
+	
+	private int rows;
+	
+	private int firstPage;
+	
+	public Page(){}
+	
+	public Page(int page, int rows) {
+		this.page = page;
+		this.rows = rows;
+		this.firstPage = (this.page - 1) * this.rows;
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	public int getRows() {
+		return rows;
+	}
+
+	public void setRows(int rows) {
+		this.rows = rows;
+	}
+	
+	public int getFirstPage() {
+		return (this.page - 1) * this.rows;
+	}
+
+	@Override
+	public String toString() {
+		return "Page [page=" + page + ", rows=" + rows + ", firstPage=" + firstPage + "]";
+	}
+	
+}

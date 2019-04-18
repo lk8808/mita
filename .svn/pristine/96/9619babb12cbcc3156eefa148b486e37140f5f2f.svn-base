@@ -1,0 +1,33 @@
+package com.tr.ibs.base;
+
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/base")
+public class BaseController {
+
+	@Autowired  
+	private HttpSession session; 
+	
+	@RequestMapping("/getSession")
+	public Map<String, Object> getSession() {
+		Enumeration<?> enumeration = session.getAttributeNames();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("sessionId", session.getId());
+		while (enumeration.hasMoreElements()) {
+			String key = enumeration.nextElement().toString();
+			Object val = session.getAttribute(key);
+			map.put(key, val);
+		}
+		
+		return map;
+	}
+}

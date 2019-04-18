@@ -1,0 +1,21 @@
+package com.tr.ibs.org.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.tr.ibs.entity.RespData;
+import com.tr.ibs.org.model.User;
+
+public interface IUserService {
+	
+	public List<User> getAllUsers();
+	
+	public RespData<Object> loginVerify(Map<String, Object> map);
+	
+	public User getUserByUserName(String username);
+	
+	public User getCurrentUser();
+	
+	public List<User> queryUsersWithPage(Map<String, Object> map);
+
+}

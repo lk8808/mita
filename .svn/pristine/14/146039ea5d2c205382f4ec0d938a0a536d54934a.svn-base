@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tr.ibs.portal.dao.RoleDao">
+	
+	<select id="queryRolesByAppid" resultType="com.tr.ibs.portal.model.Role">
+        select * from portal_role 
+        where delflag='0' and appid=#{appid} 
+    </select>
+    
+    <select id="queryListWithPage" parameterType="map" resultType="com.tr.ibs.portal.model.Role">
+        select * from portal_role where delflag='0' 
+        limit #{begin}, #{rows}
+    </select>
+    <select id="count" parameterType="map" resultType="Integer">
+        select count(1) from portal_role where delflag='0' 
+    </select>
+    
+    <!-- 通过父id查询菜单 -->
+    <select id="querySubRolesByParentidWithPage" parameterType="map" resultType="com.tr.ibs.portal.model.Role">
+        SELECT * from portal_role where ID = #{parentid} and delflag='0'
+		limit #{begin}, #{rows}
+    </select>
+    <select id="countSubRolesByParentid" parameterType="map" resultType="Integer">
+        select count(1) from portal_role where ID = #{parentid} and delflag='0'
+    </select>
+    
+    <!-- 通过应用id查询菜单 -->
+    <select id="querySubRolesByAppidWithPage" parameterType="map" resultType="com.tr.ibs.portal.model.Role">
+        SELECT * FROM portal_role WHERE delflag='0' and appid=#{parentid}
+        limit #{begin}, #{rows}
+    </select>
+    <select id="countSubRolesByAppid" parameterType="map" resultType="Integer">
+        select count(1) from portal_role WHERE delflag='0' and appid=#{parentid}
+    </select>
+    
+    <insert id="insert" parameterType="com.tr.ibs.portal.model.Role">
+        insert into portal_role (roleno,rolename,remark,delflag,isdefault,appid,createtime,creator)
+		VALUES(#{roleno},#{rolename},#{remark},#{delflag},#{isdefault},#{appid},now(),'SYS') ;
+    </insert>
+    
+    <update id="update" parameterType="com.tr.ibs.portal.model.Role">
+        update portal_role
+        <trim prefix="set" suffixOverrides=",">  
+           <if test="roleno != null">roleno=#{roleno},</if>
+           <if test="rolename != null">rolename=#{rolename},</if>
+           <if test="remark != null">remark=#{remark},</if>
+           <if test="delflag != null">delflag=#{delflag},</if>
+           <if test="isdefault != null">isdefault=#{isdefault},</if>
+           <if test="appid != null">appid=#{appid},</if>
+           modifytime=now(),modifier='SYS'
+        </trim>
+        where id = #{id}
+    </update>
+    
+    <update id="deleteBatch">
+        update portal_role set delflag='1',modifytime= now(),modifier='SYS' 
+        where id in
+        <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+    
+</mapper>

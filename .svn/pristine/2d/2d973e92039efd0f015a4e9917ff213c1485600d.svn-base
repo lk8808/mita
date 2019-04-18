@@ -1,0 +1,144 @@
+package com.tr.ibs.org.service.impl;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tr.ibs.entity.RespData;
+import com.tr.ibs.entity.Rtsts;
+import com.tr.ibs.entity.UserObject;
+import com.tr.ibs.org.dao.UserDao;
+import com.tr.ibs.org.model.User;
+import com.tr.ibs.org.service.IUserService;
+import com.tr.ibs.utils.MD5Util;
+
+@Service
+@Transactional
+public class UserServiceImpl implements IUserService {
+	
+	Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired  
+	private HttpSession session; 
+	
+	@Autowired
+	private UserDao userDao;
+
+	@Override
+	public List<User> getAllUsers() {
+		return userDao.queryAllList();
+	}
+
+	@Override
+	public RespData loginVerify(Map<String, Object> map) {
+		
+		RespData respData = new RespData();
+		
+		String username = (String)map.get("username");
+		String passwd = MD5Util.md5Encode((String)map.get("passwd"));
+		
+		User user = userDao.getUserByUsername(username);
+		if (user == null) {
+			respData.setRtsts(new Rtsts("200001", "用户名不存在"));
+			return respData;
+		}
+		if ( !passwd.equals(user.getPasswd())) {
+			respData.setRtsts(new Rtsts("200002", "密码错误"));
+			return respData;
+		}
+		respData.setRtsts(new Rtsts("000000", "登陆成功！"));
+		//保存session信息
+		UserObject userObject = new UserObject();
+		user.setPasswd("");
+		userObject.setUser(user);
+		userObject.setSessionId(session.getId());
+		session.setAttribute("userObject", userObject);
+		
+		return respData;
+	}
+
+	@Override
+	public User getUserByUserName(String username) {
+		return userDao.getUserByUsername(username);
+	}
+
+	@Override
+	public User getCurrentUser() {
+		return (UserObject)session.getAttribute("userObject") != null ?
+				((UserObject)session.getAttribute("userObject")).getUser() : null; 
+	}
+
+	@Override
+	public RespData queryAllUsersByDepid(Map<String, Object> params) {
+		RespData respData = new RespData(new Rtsts("000000", "查询成功！"));
+		//设置分页
+		int page = (int)params.get("page");
+		int rows = (int)params.get("rows");
+		params.put("begin", (page-1)*rows);
+		int depid = params.get("depid") == null ? 0 : (int)params.get("depid");
+		if (depid > 0) {
+			params.put("depid", depid);
+			respData.setRtdata("rows", userDao.queryAllUsersByDepidWithPage(params));
+			respData.setRtdata("total", userDao.countAllUsersByDepid(params));
+		} else {
+			respData.setRtdata("rows", userDao.queryListWithPage(params));
+			respData.setRtdata("total", userDao.count(params));
+		}
+		return respData;
+	}
+
+	@Override
+	public RespData save(User user) {
+		RespData respData = new RespData(new Rtsts("000000", "保存成功！"));
+		UserObject userObject = (UserObject)session.getAttribute("userObject");
+		try {
+			user.setModifier(userObject.getUser().getUsername());
+			user.setModifytime(new Date());
+			userDao.update(user);
+		} catch (Exception e) {
+			respData.setRtsts(new Rtsts("100001", "保存失败！"));
+			logger.error(e.getMessage());
+		}
+		return respData;
+	}
+
+	@Override
+	public boolean isUnique(User user) {
+		int tmpId = user.getId();
+		User tmp = userDao.expand(user);
+		if (tmp != null && tmpId != tmp.getId()) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public RespData resetPasswd(String ids) {
+		RespData respData = new RespData(new Rtsts("000000", "保存成功！"));
+		UserObject userObject = (UserObject)session.getAttribute("userObject");
+		try {
+			String[] idArr = ids.split(",");
+			for (String id : idArr) {
+				User user = new User();
+				user.setId(Integer.valueOf(id));
+				user.setPasswd(MD5Util.md5Encode("000000"));
+				user.setModifier(userObject.getUser().getUsername());
+				user.setModifytime(new Date());
+				userDao.update(user);
+			}
+		} catch (Exception e) {
+			respData.setRtsts(new Rtsts("100001", "保存失败！"));
+			logger.error(e.getMessage());
+		}
+		return respData;
+	}
+
+}

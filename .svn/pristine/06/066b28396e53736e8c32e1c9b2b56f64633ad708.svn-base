@@ -1,0 +1,36 @@
+package com.tr.ibs.org.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.tr.ibs.entity.RespData;
+import com.tr.ibs.org.model.Depposlnk;
+import com.tr.ibs.org.service.IDepposlnkService;
+
+@RestController
+@RequestMapping("/depposlnk")
+public class DepposlnkController {
+	
+	@Autowired
+	private IDepposlnkService depposlnkService;
+
+	@RequestMapping("/queryByDepid")
+	public List<Depposlnk> queryByDepid(Integer depid) {
+		return depposlnkService.queryByDepid(depid);
+	}
+	
+	@RequestMapping("/queryByDepid_ext")
+	public RespData queryByDepid_ext(@RequestBody Map<String, Object> params) {
+		return depposlnkService.queryByDepid_ext(params);
+	}
+	
+	@RequestMapping("/getDepposTree")
+	public List<Map<String, Object>> getDepposTree() {
+		return depposlnkService.getDepposTree();
+	}
+}

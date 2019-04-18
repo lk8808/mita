@@ -1,0 +1,13 @@
+package com.tr.ibs.org.dao;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.tr.ibs.base.IBaseDao;
+import com.tr.ibs.org.model.User;
+
+@Mapper
+public interface UserDao extends IBaseDao<User> {
+	
+	public User getUserByUsername(String username);
+	
+}

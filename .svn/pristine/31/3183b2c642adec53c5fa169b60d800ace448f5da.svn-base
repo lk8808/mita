@@ -1,0 +1,29 @@
+package com.tr.ibs.portal.model;
+
+public class Appgroup {
+	
+    private Long id;
+
+    private String groupname;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getGroupname() {
+        return groupname;
+    }
+
+    public void setGroupname(String groupname) {
+        this.groupname = groupname == null ? null : groupname.trim();
+    }
+
+	@Override
+	public String toString() {
+		return "Appgroup [id=" + id + ", groupname=" + groupname + "]";
+	}
+}

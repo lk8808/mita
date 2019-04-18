@@ -1,0 +1,223 @@
+
+
+$(function() {
+	loadTree();
+	loadList();
+})
+
+var isLoadAuth = false;
+
+/**
+ * 加载菜单树
+ */
+function loadTree() {
+    $.ajax({
+        url: "/role/getAppRoleTree",
+        type: "POST",
+        success: function(retData) {
+            $("#tree").tree({
+                data: retData.rtdata.tree,
+                animate: true,
+                onClick: function(node){  	
+                	if (node.attributes.type == "app") {
+                		$('#datagrid').datagrid('load',{
+                        	appid: node.id,
+                        });
+                	}
+                }
+            });
+        },
+        error: function (xhr, rtmsg, e) { 
+        }
+    });
+}
+
+/**
+ * 加载列表
+ */
+function loadList() {
+	$("#datagrid").datagrid({
+    	title:"数据列表",
+        url:'/role/queryRoles4Tree',
+        loader: datagrid_loader,
+        pagination:true,
+        pageSize:10,
+        pageNumber:1,
+        toolbar:'#toolbar',
+        loadMsg:'加载中...',
+        fit:true,
+        columns:[[
+            {field:'id', checkbox:true},
+            {field:'roleno', title: '角色编号'},
+            {field:'rolename', title: '角色名称'},
+            {field:'isdefault', title: '是否默认角色', formatter: dict_formatter, dicttypeid:'comm_yesorno'}
+        ]]
+    });
+}
+
+/**
+ * 查询
+ */
+function query() {
+	var node = $("#tree").tree("getSelected");
+	var appid = node.attributes.id;
+    $('#datagrid').datagrid('load',{
+    	appid: appid
+    });
+}
+
+/**
+ * 打开新增面板
+ */
+function add() {
+ 	$editTab = $("#" + _ADD_PARAM[0]);
+ 	var node = $("#tree").tree("getSelected");
+ 	if (!node || !node.attributes || node.attributes.type != 'app') {
+ 		$.messager.alert("提示", "请选中所属应用!");
+ 		return;
+ 	}
+	$dataForm = $("#" + _ADD_PARAM[2]);
+	$dataForm.form("clear");
+	$dataForm.url = _ADD_PARAM[3];	
+ 	$("#appid").combogrid('setValue', node.id);
+	$editTab.dialog("open").dialog('setTitle', _ADD_PARAM[1]);	
+}
+
+/**
+ * 保存
+ */
+function save(){
+    $.messager.progress({
+        title: '请稍后',
+        msg: '正在保存...',
+        text: '正在保存...'
+    });
+    $("#dataForm").form('submit', {
+        url: '/role/save',
+        onSubmit: function(){
+            var isValid = $(this).form('validate');
+            if (!isValid){
+                $.messager.progress('close');   
+            }
+            return isValid; 
+        },
+        success: function(retData){
+            $.messager.progress('close'); 
+            retData = eval('(' + retData + ')');
+            if (retData.rtsts.code == "000000") {
+                $.messager.alert("消息", "保存成功");
+                $('#editTab').dialog('close');
+                loadTree();
+                reload();
+            } else {
+                $.messager.alert("消息", "保存失败");
+            }
+        }
+    });
+}
+
+/**
+ * 加载权限配置
+ */
+var editRow = undefined;
+function loadAuth(roleid) {
+	$("#authgrid").datagrid({
+		url: '/roleauthcfg/queryRoleauthcfgsByRoleid',
+		queryParams: {
+			roleid: roleid
+		},
+		singleSelect: true,
+        loadMsg:'加载中...',
+        columns:[[
+            {field:'cfgtype', title: '配置类型', editor:{type:'textbox'}, hidden:true},
+			{field:'cfgtypedesc', title: '配置类型', width: 150, 
+			 editor: {
+				 type:'combobox', 
+				 options:{
+					 panelHeight: 'auto',
+					 url: '/dict/queryDictsByDicttypeid?dicttypeid=portal_roleauthtype',
+					 method:'post',
+				     valueField: 'dictname',
+					 textField: 'dictname',
+					 onSelect: function(record) {
+						 var editor = $("#authgrid").datagrid('getEditor', {index:editRow, field:'cfgtype'});
+						 editor.target.textbox('setValue', record.dictid);
+					 }
+				 }
+			}},
+			{field:'lnkname', title: '配置名称', width: 200},
+			{field:'opt', title: '操作', align:'center', width: 100,
+				formatter: function(value, row, index) {
+					var delBtn = "<a href='javascript:void(0)' onclick='deleteRow(" + index + ")' class='delcls' >删除</a>";
+					return delBtn;
+				}
+			}
+		]],
+		onLoadSuccess:function(data){
+			$('.delcls').linkbutton({text:'删除',plain:true,iconCls:'icon-remove'});
+		},
+		toolbar: [{
+            text: '添加', iconCls: 'icon-add', handler: function () {
+            	if (editRow != undefined) {
+                    $("#authgrid").datagrid('endEdit', editRow);
+                }
+                if (editRow == undefined) {
+                    var row = $("#authgrid").datagrid('appendRow', {});
+                    editRow =  $("#authgrid").datagrid('getRowIndex');
+                    $("#authgrid").datagrid('beginEdit', editRow); 
+                }
+            }
+        }],
+		onAfterEdit:function(index,row){
+			console.log(row);
+			editRow = undefined;
+		},
+		onClickRow:function(rowIndex,rowData){
+            if (editRow != undefined) {
+                $("#authgrid").datagrid('endEdit', editRow);
+            }  
+        },
+        onDblClickRow:function (rowIndex, rowData) {
+        	if (editRow != undefined) {
+                $("#authgrid").datagrid('endEdit', editRow);
+            }
+            if (editRow == undefined) {
+                $("#authgrid").datagrid('beginEdit', rowIndex);
+                editRow = rowIndex;
+            }
+        }
+	});
+	isLoadAuth = true;
+}
+
+/**
+ * 打开权限配置面板
+ */
+function auth() {
+	var rows = $("#datagrid").datagrid('getSelections');
+	var row = rows[0];
+    if (rows.length != 1) {
+        alert("请选中一条记录");
+        return;
+    }
+    $("#id_auth").val(row.id);
+    //$("#roleno_auth").textbox("setValue", row.roleno);
+    //$("#rolename_auth").textbox("setValue", row.rolename);
+    if (isLoadAuth) {
+    	$('#authgrid').datagrid('load',{
+        	roleid: row.id
+    	});
+    } else {
+    	loadAuth(row.id);
+    }
+    $("#authTab").dialog("open").dialog('setTitle', "权限配置");
+}
+
+/**
+ * 删除一行
+ */
+function deleteRow(index) {
+	$("#authgrid").datagrid("deleteRow", index);
+	$("#authgrid").datagrid("loadData", $("#authgrid").datagrid("getRows"));
+}
+

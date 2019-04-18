@@ -1,0 +1,19 @@
+package com.tr.ibs.org.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.tr.ibs.base.IBaseDao;
+import com.tr.ibs.org.model.Depposlnk;
+
+@Mapper
+public interface DepposlnkDao extends IBaseDao<Depposlnk> {
+	
+	public List<Depposlnk> queryByDepid(int depid);
+	
+	public int insertByDepidPosids(Map<String, Object> params);
+
+	public int deleteByDepid(int depid);
+}

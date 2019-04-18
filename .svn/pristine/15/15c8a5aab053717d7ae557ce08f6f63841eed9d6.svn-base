@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tr.ibs.portal.dao.ApplicationDao">
+
+	<!-- 查询所有列表 -->
+	<select id="queryAllList" resultType="com.tr.ibs.portal.model.Application">
+		select * from portal_application
+	</select>
+	
+	<!-- 分页查询列表 -->
+	<select id="queryListWithPage" parameterType="map" resultType="map">
+	    SELECT a.* FROM portal_application a
+        where a.delflag='0'
+        limit #{begin}, #{rows}
+	</select>
+	
+</mapper>

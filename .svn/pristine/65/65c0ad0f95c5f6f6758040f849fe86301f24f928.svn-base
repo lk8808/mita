@@ -1,0 +1,136 @@
+package com.tr.ibs.portal.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tr.ibs.entity.RespData;
+import com.tr.ibs.entity.Rtsts;
+import com.tr.ibs.portal.dao.ApplicationDao;
+import com.tr.ibs.portal.dao.RoleDao;
+import com.tr.ibs.portal.model.Application;
+import com.tr.ibs.portal.model.Menu;
+import com.tr.ibs.portal.model.Role;
+import com.tr.ibs.portal.service.IRoleService;
+
+@Service
+@Transactional
+public class RoleServiceImpl implements IRoleService {
+
+	Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private RoleDao roleDao;
+	
+	@Autowired
+	private ApplicationDao applicationDao;
+	
+
+	@Override
+	public List<Map<String, Object>> getAppRoleTree() {
+		List<Map<String, Object>> nodes = new ArrayList<Map<String, Object>>();
+		//获取所有应用
+		List<Application> apps = applicationDao.queryAllList();
+		for (Application app : apps) {
+			//创建节点
+			Map<String, Object> node = new HashMap<String, Object>();
+			Map<String, Object> attributes = new HashMap<String, Object>();
+			attributes.put("id", app.getId());
+			attributes.put("type", "app");
+			node.put("id", app.getId());
+			node.put("text", app.getAppname());
+			node.put("attributes", attributes);
+			//获取应用下的菜单
+			List<Role> roles = roleDao.queryRolesByAppid(String.valueOf(app.getId()));
+			List<Map<String, Object>> children = new ArrayList<Map<String, Object>>();
+			for (Role role : roles) {
+				Map<String, Object> node1 = new HashMap<String, Object>();
+				Map<String, Object> attributes1 = new HashMap<String, Object>();
+				attributes1.put("id", role.getId());
+				attributes1.put("type", "role");
+				node1.put("id", role.getId());
+				node1.put("text", role.getRolename());
+				node1.put("attributes", attributes1);
+				children.add(node1);
+			}
+			node.put("state", "closed");
+			if (children != null && children.size() > 0) {
+				node.put("children", children);
+			}
+			nodes.add(node);
+		}
+		return nodes;
+	}
+
+	@Override
+	public RespData queryRoles4Tree(Map<String, Object> params) {
+		RespData respData = new RespData(new Rtsts("000000", "查询成功！"));
+		int page = (int)params.get("page");
+		int rows = (int)params.get("rows");
+		params.put("begin", (page-1)*rows);
+		
+		String parentid = String.valueOf(params.get("parentid"));
+		String type = (String)params.get("type");
+		//不存在上级id，查询所有
+		if (parentid == null || type == null) {
+			respData.setRtdata("rows", roleDao.queryListWithPage(params));
+			respData.setRtdata("total", roleDao.count(params));
+			return respData;
+		}
+		//上级类型为应用，查询应用下所有菜单
+		if ("app".equals(type)) {
+			params.put("appid", parentid);
+			respData.setRtdata("rows", roleDao.querySubRolesByAppidWithPage(params));
+			respData.setRtdata("total", roleDao.countSubRolesByAppid(params));
+			return respData;
+		}
+		//上级类型为菜单，查询该菜单下所有子菜单
+		if ("role".equals(type)) {
+			params.put("parentid", parentid);
+			respData.setRtdata("rows", roleDao.querySubRolesByParentidWithPage(params));
+			respData.setRtdata("total", roleDao.countSubRolesByParentid(params));
+			return respData;
+		}
+		return null;
+	}
+	
+	@Override
+	public RespData save(Role role) {
+		RespData respData = new RespData(new Rtsts("000000", "保存成功！"));
+		try {
+			if (role.getId() != null && role.getId() > 0) {
+				roleDao.update(role);
+			} else {
+				role.setDelflag("0");
+				roleDao.insert(role);
+			}
+		} catch (Exception e) {
+			respData.setRtsts(new Rtsts("100001", "保存失败！"));
+			logger.error(e.getMessage());
+		}	
+		return respData;
+	}
+
+	@Override
+	public RespData del(String ids) {
+		RespData respData = new RespData(new Rtsts("000000", "删除成功！"));
+		try {
+			if (ids != null) {
+				String[] idArr = ids.split(",");
+				roleDao.deleteBatch(idArr);
+			}
+		} catch (Exception e) {
+			respData.setRtsts(new Rtsts("100001", "删除失败！"));
+			logger.error(e.getMessage());
+		}	
+		return respData;
+	}
+	
+}

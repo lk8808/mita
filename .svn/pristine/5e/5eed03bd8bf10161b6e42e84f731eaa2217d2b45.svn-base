@@ -1,0 +1,55 @@
+
+
+$(function() {
+	loadTree();
+	loadList();
+})
+
+/**
+ * 加载菜单树
+ */
+function loadTree() {
+    $.ajax({
+        url: "/department/getDepTree",
+        type: "POST",
+        success: function(retData) {
+            $("#tree").tree({
+                data: retData,
+                animate: true,
+                onClick: function(node){  	
+                	var parentid = node.attributes.id;
+                	var type = node.attributes.type;
+                	$('#datagrid').datagrid('load',{
+                    	parentid: parentid
+                    });
+                }
+            });
+        },
+        error: function (xhr, rtmsg, e) { 
+        }
+    });
+}
+
+/**
+ * 加载列表
+ */
+function loadList() {
+	$("#datagrid").datagrid({
+    	title:"数据列表",
+        url:'/department/queryAllDepsByParentid',
+        loader: datagrid_page_loader,
+        pagination:true,
+        pageSize:10,
+        pageNumber:1,
+        toolbar:'#toolbar',
+        loadMsg:'加载中...',
+        fit:true,
+        columns:[[
+            {field:'id', checkbox:true},
+            {field:'sortno', title: '序号'},
+            {field:'depno', title: '部门编号'},
+            {field:'depname', title: '部门名称'},
+            {field:'principal', title: '部门负责人'}
+        ]]
+    });
+}

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tr.ibs.portal.dao.MenuDao">
+
+    <!-- 查询所有的一级菜单 -->
+    <select id="queryAllList" resultType="com.tr.ibs.portal.model.Menu">
+        select * from portal_menu where delflag='0'
+    </select>
+    
+    <!-- 查询所有的一级菜单 -->
+    <select id="queryMenusLevel1" resultType="com.tr.ibs.portal.model.Menu">
+        select * from portal_menu where delflag='0' and menulevel=1
+    </select>
+    
+    <select id="queryListWithPage" parameterType="map" resultType="com.tr.ibs.portal.model.Menu">
+        select * from portal_menu where delflag='0' 
+        limit #{begin}, #{rows}
+    </select>
+    <select id="count" parameterType="map" resultType="Integer">
+        select count(1) from portal_menu where delflag='0' 
+    </select>
+    
+    <!-- 通过父id查询菜单 -->
+    <select id="queryMenusByParentid" parameterType="String" resultType="com.tr.ibs.portal.model.Menu">
+        select * from portal_menu
+        WHERE delflag='0' and parentid = #{parentid}
+    </select>
+    
+    <!-- 通过父id查询菜单 -->
+    <select id="querySubMenusByParentidWithPage" parameterType="map" resultType="com.tr.ibs.portal.model.Menu">
+        SELECT * FROM portal_menu WHERE ID IN (
+		    SELECT id FROM (
+		        SELECT id, parentid, IF(FIND_IN_SET(parentid, @pids) > 0, @pids := CONCAT(@pids, ',', id), 0) pids
+		        FROM portal_menu, (SELECT @pids := #{parentid}) var
+		        WHERE FIND_IN_SET(parentid, @pids) > 0
+		    ) tmp
+		) AND ID != #{parentid}
+		limit #{begin}, #{rows}
+    </select>
+    <select id="countSubMenusByParentid" parameterType="map" resultType="Integer">
+        select count(1) from portal_menu where ID IN (
+            SELECT id FROM (
+                SELECT id, parentid, IF(FIND_IN_SET(parentid, @pids) > 0, @pids := CONCAT(@pids, ',', id), 0) pids
+                FROM portal_menu, (SELECT @pids := #{parentid}) var
+                WHERE FIND_IN_SET(parentid, @pids) > 0
+            ) tmp
+        ) AND ID != #{parentid}
+    </select>
+    
+    <!-- 通过应用id查询菜单 -->
+    <select id="querySubMenusByAppidWithPage" parameterType="map" resultType="com.tr.ibs.portal.model.Menu">
+        SELECT * FROM portal_menu WHERE ID IN (
+            SELECT id FROM portal_menu WHERE appid=#{parentid}
+            union
+            SELECT id FROM (
+                SELECT id, parentid, IF(FIND_IN_SET(parentid, @pids) > 0, @pids := CONCAT(@pids, ',', id), 0) pids
+                FROM portal_menu, (SELECT @pids := (SELECT GROUP_CONCAT(id) FROM portal_menu WHERE appid=#{parentid})) var
+                WHERE FIND_IN_SET(parentid, @pids) > 0
+            ) tmp
+        )
+        limit #{begin}, #{rows}
+    </select>
+    <select id="countSubMenusByAppid" parameterType="map" resultType="Integer">
+        select count(1) from portal_menu where ID IN (
+            SELECT id FROM portal_menu WHERE appid=#{parentid}
+            union
+            SELECT id FROM (
+                SELECT id, parentid, IF(FIND_IN_SET(parentid, @pids) > 0, @pids := CONCAT(@pids, ',', id), 0) pids
+                FROM portal_menu, (SELECT @pids := (SELECT GROUP_CONCAT(id) FROM portal_menu WHERE appid=#{parentid})) var
+                WHERE FIND_IN_SET(parentid, @pids) > 0
+            ) tmp
+        )
+    </select>
+    
+    <select id="queryMenusByAppid" resultType="com.tr.ibs.portal.model.Menu">
+        select * from portal_menu 
+        where delflag='0' and appid=#{appid}
+    </select>
+</mapper>

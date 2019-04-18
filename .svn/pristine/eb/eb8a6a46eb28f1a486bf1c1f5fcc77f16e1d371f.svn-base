@@ -1,0 +1,61 @@
+/**
+ * 公共js
+ */
+
+
+/**
+ * ajax全局处理
+ * 	当session过期时跳转至登陆页面
+ */
+$(function(){
+    $.ajaxSettings.complete = function(xhr, status){
+    	var retData = xhr.responseText;
+    	retData = eval('(' + retData + ')');
+    	if (retData.rt && retData.rt.code) {
+    		if (retData.rt.code == '000009') {
+    			if (window.parent) {
+    				window.parent.location.href = '/view/login.html';
+    				return;
+    			} 
+    			window.location.href = '/view/login.html';
+    		}
+    	}
+    }
+});
+
+/**
+ * 数据字典初始化
+ */
+$(function() {
+	$(".dict").combobox({
+		loader: dict_loader,
+		valueField: 'dictid',
+		textField: 'dictname'
+	});
+});
+
+/**
+ * 数据字典查询加载器
+ * @param params
+ * @param success
+ * @param error
+ */
+function dict_loader(params, success, error) {
+	var that = $(this);  
+    var opts = that.combobox("options");  
+    var dicttypeid = opts.dicttypeid;
+    $.ajax({  
+        url: '/dict/queryDictsByDicttypeid',  
+        type: "POST",  
+        data: {dicttypeid: dicttypeid}, 
+        success: function(retData) {  
+            success(retData);
+        },  
+        error: function(xhr, rtmsg, e) { 
+        } 
+    });  
+}
+
+
+
+

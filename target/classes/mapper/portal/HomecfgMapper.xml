@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tr.ibs.portal.dao.HomecfgDao">
+    
+    <resultMap type="java.util.HashMap" id="Myhomecfg">
+	      <result column="menuid" property="menuid" jdbcType="BIGINT"  javaType="int" />
+	      <result column="widthcell"  property="widthcell" jdbcType="BIGINT"  javaType="int"/>
+	      <result column="heightcell"  property="heightcell" jdbcType="INTEGER"  javaType="int"/>
+	      <result column="sortno" property="sortno" jdbcType="INTEGER"  javaType="int"/>
+	      <result column="menuurl" property="menuurl" jdbcType="VARCHAR"  javaType="String"/>
+	      <result column="homeurl" property="homeurl" jdbcType="VARCHAR"  javaType="String"/>
+	      <result column="menuname" property="menuname" jdbcType="VARCHAR"  javaType="String"/>
+	</resultMap>
+	
+	<!-- 通过应用id查询菜单 -->
+    <select id="queryMyhomecfg" parameterType="map" resultMap="Myhomecfg">
+        select b.id menuid ,a.widthcell widthcell,a.heightcell heightcell,a.sortno sortno,b.menuurl menuurl,b.homeurl homeurl,b.menuname
+		from portal_homecfg a ,portal_menu b 
+		where a.menuid=b.id and a.delflag='0' and b.delflag='0' and a.userid = (case when (select count(1) from portal_homecfg where userid=#{userid} and delflag='0')>0 then 0 else 0 end)
+		order by a.sortno
+    </select>
+    
+    
+</mapper>

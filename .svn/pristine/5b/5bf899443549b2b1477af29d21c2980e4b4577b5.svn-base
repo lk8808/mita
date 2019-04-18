@@ -1,0 +1,185 @@
+package com.tr.ibs.portal.model;
+
+import java.util.Date;
+
+public class Application {
+    private Long id;
+
+    private String appcode;
+
+    private String appname;
+
+    private String apptype;
+
+    private String url;
+
+    private String bigicon;
+
+    private String smallicon;
+
+    private String remark;
+
+    private String isintoolbar;
+
+    private String isinstatebar;
+
+    private Date regeditdate;
+
+    private String issupportsso;
+
+    private String isinteral;
+
+    private Integer sortno;
+
+    private Long appgroupid;
+
+    private String publisher;
+
+    private String version;
+
+    private String delflag;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getAppcode() {
+        return appcode;
+    }
+
+    public void setAppcode(String appcode) {
+        this.appcode = appcode == null ? null : appcode.trim();
+    }
+
+    public String getAppname() {
+        return appname;
+    }
+
+    public void setAppname(String appname) {
+        this.appname = appname == null ? null : appname.trim();
+    }
+
+    public String getApptype() {
+        return apptype;
+    }
+
+    public void setApptype(String apptype) {
+        this.apptype = apptype == null ? null : apptype.trim();
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url == null ? null : url.trim();
+    }
+
+    public String getBigicon() {
+        return bigicon;
+    }
+
+    public void setBigicon(String bigicon) {
+        this.bigicon = bigicon == null ? null : bigicon.trim();
+    }
+
+    public String getSmallicon() {
+        return smallicon;
+    }
+
+    public void setSmallicon(String smallicon) {
+        this.smallicon = smallicon == null ? null : smallicon.trim();
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
+    }
+
+    public String getIsintoolbar() {
+        return isintoolbar;
+    }
+
+    public void setIsintoolbar(String isintoolbar) {
+        this.isintoolbar = isintoolbar == null ? null : isintoolbar.trim();
+    }
+
+    public String getIsinstatebar() {
+        return isinstatebar;
+    }
+
+    public void setIsinstatebar(String isinstatebar) {
+        this.isinstatebar = isinstatebar == null ? null : isinstatebar.trim();
+    }
+
+    public Date getRegeditdate() {
+        return regeditdate;
+    }
+
+    public void setRegeditdate(Date regeditdate) {
+        this.regeditdate = regeditdate;
+    }
+
+    public String getIssupportsso() {
+        return issupportsso;
+    }
+
+    public void setIssupportsso(String issupportsso) {
+        this.issupportsso = issupportsso == null ? null : issupportsso.trim();
+    }
+
+    public String getIsinteral() {
+        return isinteral;
+    }
+
+    public void setIsinteral(String isinteral) {
+        this.isinteral = isinteral == null ? null : isinteral.trim();
+    }
+
+    public Integer getSortno() {
+        return sortno;
+    }
+
+    public void setSortno(Integer sortno) {
+        this.sortno = sortno;
+    }
+
+    public Long getAppgroupid() {
+        return appgroupid;
+    }
+
+    public void setAppgroupid(Long appgroupid) {
+        this.appgroupid = appgroupid;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher == null ? null : publisher.trim();
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version == null ? null : version.trim();
+    }
+
+    public String getDelflag() {
+        return delflag;
+    }
+
+    public void setDelflag(String delflag) {
+        this.delflag = delflag == null ? null : delflag.trim();
+    }
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <script type="text/javascript">   
+            var _DATAGRID_ID = 'datagrid';
+            var _ADD_PARAM = ['editTab', '新增', 'dataForm', '/role/save']
+            var _EDIT_PARAM = ['editTab', '编辑', 'dataForm', '/role/save']
+            var _DEL_PARAM = ['/role/del', 'ids'];
+        </script>
+        <script type="text/javascript" src="/javascript/comm.js"></script>
+        <script type="text/javascript" src="role_mgr.js"></script>
+    </head>
+    <body>
+        <div class="easyui-layout" data-options="fit:true">
+            <div data-options="region:'west',split:true,title:'角色树'" style="width: 200px">
+		        <ul id="tree"></ul>
+		    </div>
+		    <div data-options="region:'center',split:true">
+		        <table id="datagrid">
+		        </table>
+		        <!-- 工具栏 -->
+		        <div id="toolbar" style="padding:5px;height:auto">
+		            <div>
+		                <a href="javascript:add();" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:'true'" >新增</a>
+		                <a href="javascript:edit()" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:'true'">编辑</a>
+		                <a href="javascript:del()" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:'true'" >删除</a>
+		                <a href="javascript:auth()" class="easyui-linkbutton" data-options="iconCls:'icon-more',plain:'true'" >权限配置</a>
+		            </div>
+		        </div>
+		    </div>
+        </div>
+        <div id="editTab" class="easyui-dialog" style="width:600px;height:400px;padding:10px 20px;"
+             data-options="closed:true,modal:true,buttons:'#editTabBtns'">
+            <form id="dataForm" method="post" style="padding:10px 20px 10px 40px;">
+                <input type="hidden" id="id" name="id" >
+                <table >
+                    <tr>
+                        <td>角色编号：</td>
+                        <td>
+                            <input name="roleno" class="easyui-textbox" data-options="required:true">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>角色名称：</td>
+                        <td>
+                            <input name="rolename" class="easyui-textbox" data-options="required:true">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>是否默认：</td>
+                        <td>
+                            <input name="isdefault" class="easyui-combobox dict" 
+                                   data-options="dicttypeid:'comm_yesorno', panelHeight:100, required:true">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>所属应用：</td>
+                        <td>
+                            <input id="appid" name="appid" class="easyui-combogrid" style="width:200px;"
+                                   data-options="panelWidth:400,
+                                                 url:'/application/queryApplicationsByPage',
+                                                 loader: datagrid_loader,
+                                                 pagination:true,
+											     pageSize:5,
+											     pageNumber:1,
+											     pageList:[5,10,15],
+                                                 idField:'id',
+                                                 textField:'appname',
+                                                 columns:[[
+												    {field:'id',title:'id',width:0},
+												    {field:'appname',title:'应用名称',width:100}
+												 ]]" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>角色描述：</td>
+                        <td>
+                            <input name="remark" data-options="multiline:true" class="easyui-textbox" style="width:300px;height:50px">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div id="editTabBtns">
+            <a href="javascript:save()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+            <a href="javascript:$('#editTab').dialog('close')" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">取消</a>
+        </div>
+        <div id="authTab" class="easyui-dialog" style="width:600px;height:400px;padding:10px 20px;"
+             data-options="closed:true,modal:true,buttons:'#authTabBtns'">
+            <input type="hidden" id="roleid_auth">
+            <table id="authgrid">
+            </table>
+        </div>
+        <div id="authTabBtns">
+            <a href="javascript:saveAuth()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+            <a href="javascript:$('#authTab').dialog('close')" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">取消</a>
+        </div>
+    </body>
+</html>

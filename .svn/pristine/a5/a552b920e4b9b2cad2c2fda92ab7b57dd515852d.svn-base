@@ -1,0 +1,28 @@
+package com.tr.ibs.portal.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tr.ibs.portal.dao.ApplicationDao;
+import com.tr.ibs.portal.service.IApplicationService;
+
+@Service
+@Transactional
+public class ApplicationServiceImpl implements IApplicationService {
+
+	@Autowired
+	private ApplicationDao applicationDao;
+	
+	@Override
+	public List<Map<String, Object>> queryApplicationsWithPage(Map<String, Object> map) {
+		int page = (int)map.get("page");
+		int rows = (int)map.get("rows");
+		map.put("begin", (page-1)*rows);
+		return applicationDao.queryListWithPage(map);
+	}
+
+}

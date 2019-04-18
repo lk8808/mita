@@ -1,0 +1,12 @@
+package com.tr.ibs.org.service;
+
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.tr.ibs.entity.RespData;
+
+public interface IPositionService {
+
+	public RespData queryPositions(@RequestBody Map<String, Object> params);
+}

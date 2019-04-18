@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tr.ibs.org.dao.DepposlnkDao">
+
+    <select id="queryByDepid" parameterType="Integer" resultType="com.tr.ibs.org.model.Depposlnk">
+        select * from org_depposlnk where departmentid=#{depid}
+    </select>
+    
+    <select id="queryByDepid_ext" parameterType="map" resultType="map">
+        SELECT lnk.*, d.depname depname, p.posname posname
+		FROM org_depposlnk lnk
+		LEFT JOIN org_department d ON lnk.departmentid=d.id AND d.delflag=0
+		LEFT JOIN org_position p ON lnk.positionid=p.id AND p.delflag=0
+        where lnk.departmentid=#{depid}
+        limit #{begin}, #{rows}
+    </select>
+    
+    <select id="countByDepid" parameterType="map" resultType="Integer">
+        select count(1) from org_depposlnk where departmentid=#{depid}
+    </select>
+    
+    <insert id="insertByDepidPosids" parameterType="map">
+        insert into org_depposlnk(departmentid, positionid, createtime, creator)
+        values
+        <foreach collection="posids" index="index" item="item" separator=",">
+            (#{depid}, #{item}, current_timestamp, #{creator})
+        </foreach>
+    </insert>
+    
+    <delete id="deleteByDepid" parameterType="Integer">
+        delete from org_depposlnk where departmentid=#{depid}
+    </delete>
+    
+</mapper>

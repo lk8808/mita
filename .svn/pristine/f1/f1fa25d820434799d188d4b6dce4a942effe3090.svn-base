@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <script type="text/javascript">   
+            var _DATAGRID_ID = 'datagrid';
+            var _ADD_PARAM = ['editTab', '新增', 'dataForm', '/department/save']
+            var _EDIT_PARAM = ['editTab', '编辑', 'dataForm', '/department/save']
+            var _DEL_PARAM = ['/department/del', 'ids'];
+            var _UNIQUE_URL = '/department/unique';
+        </script>
+        <script type="text/javascript" src="/javascript/comm.js"></script>
+        <script type="text/javascript" src="department_mgr.js"></script>
+    </head>
+    <body>
+        <div class="easyui-layout" data-options="fit:true">
+            <div data-options="region:'west',split:true,title:'组织机构树'" style="width: 200px">
+                <ul id="tree"></ul>
+            </div>
+            <div data-options="region:'center',split:true">
+                <table id="datagrid">
+                </table>
+                <!-- 工具栏 -->
+                <div id="toolbar" style="padding:5px;height:auto">
+                    <div>
+                        <a href="javascript:add();" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:'true'" >新增</a>
+                        <a href="javascript:edit()" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:'true'">编辑</a>
+                        <a href="javascript:del()" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:'true'" >删除</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="editTab" class="easyui-dialog" style="width:600px;height:500px;padding:10px 20px;"
+             data-options="closed:true,modal:true,buttons:'#editTabBtns'">
+            <form id="dataForm" method="post" style="padding:10px 20px 10px 40px;">
+                <input type="hidden" id="id" name="id" >
+                <table >
+                    <tr>
+                        <td>部门编号：</td>
+                        <td>
+                            <input name="depno" class="easyui-textbox" 
+                                   data-options="required:true"
+                                   validType="unique['depno']">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>部门名称：</td>
+                        <td>
+                            <input name="depname" class="easyui-textbox" 
+                                   data-options="required:true"
+                                   validType="unique['depname']">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>上级部门：</td>
+                        <td>
+                            <input id="parentid" name="parentid" class="easyui-combotree" 
+                                   data-options="url:'/department/getDepTree'">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>部门电话：</td>
+                        <td>
+                            <input name="workphone" class="easyui-textbox" >
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>部门地址：</td>
+                        <td>
+                            <input name="address" class="easyui-textbox" style="width:300px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>部门负责人：</td>
+                        <td>
+                            <input name="principalid" class="easyui-combogrid" 
+                                   data-options="url:'',
+                                                 idField:'id',
+                                                 textField:'empname',
+                                                 columns:[[
+                                                    {field:'id',title:'id',width:0},
+                                                    {field:'empname',title:'员工名称',width:100}
+                                                 ]]">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>排序：</td>
+                        <td>
+                            <input name="sortno" class="easyui-numberbox" style="width:100px"
+                                   data-options="min:1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>备注：</td>
+                        <td>
+                            <input name="remark" class="easyui-textbox" 
+                                   data-options="multiline:true,width:300,height:80">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div id="editTabBtns">
+            <a href="javascript:save()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+            <a href="javascript:$('#editTab').dialog('close')" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">取消</a>
+        </div>
+    </body>
+</html>

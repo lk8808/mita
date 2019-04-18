@@ -1,0 +1,82 @@
+package com.tr.ibs.portal.service.impl;
+
+import java.util.Date;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tr.ibs.entity.RespData;
+import com.tr.ibs.entity.Rtsts;
+import com.tr.ibs.entity.UserObject;
+import com.tr.ibs.portal.dao.RoleDao;
+import com.tr.ibs.portal.model.Role;
+import com.tr.ibs.portal.service.IRoleService;
+
+@Service
+@Transactional
+public class RoleServiceImpl implements IRoleService {
+
+	Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private RoleDao roleDao;
+	
+	@Autowired
+	private HttpSession session;
+
+	@Override
+	public RespData queryListWithPage(Map<String, Object> params) {
+		RespData respData = new RespData(new Rtsts("000000", "查询成功！"));
+		int page = (int)params.get("page");
+		int rows = (int)params.get("rows");
+		params.put("begin", (page-1)*rows);
+		respData.setRtdata("rows", roleDao.queryListWithPage(params));
+		respData.setRtdata("total", roleDao.count(params));
+		
+		return respData;
+	}
+
+	@Override
+	public RespData save(Role role) {
+		RespData respData = new RespData(new Rtsts("000000", "保存成功！"));
+		UserObject userObject = (UserObject)session.getAttribute("userObject");
+		try {
+			if (role.getId() != null && role.getId() > 0) {
+				role.setModifytime(new Date());
+				role.setModifier(userObject.getUser().getUsername());
+				roleDao.update(role);
+			} else {
+				role.setDelflag("0");
+				role.setCreatetime(new Date());
+				role.setCreator(userObject.getUser().getUsername());
+				roleDao.insert(role);
+			}
+		} catch (Exception e) {
+			respData.setRtsts(new Rtsts("100001", "保存失败！"));
+			logger.error(e.getMessage());
+		}
+		return respData;
+	}
+
+	@Override
+	public RespData del(String ids) {
+		RespData respData = new RespData(new Rtsts("000000", "删除成功！"));
+		try {
+			if (ids != null) {
+				String[] idArr = ids.split(",");
+				roleDao.deleteBatch(idArr);
+			} 
+		} catch (Exception e) {
+			respData.setRtsts(new Rtsts("100001", "删除失败！"));
+			logger.error(e.getMessage());
+		}	
+		return respData;
+	}
+	
+}

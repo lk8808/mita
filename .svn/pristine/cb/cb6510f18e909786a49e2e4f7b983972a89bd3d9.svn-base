@@ -1,0 +1,42 @@
+package com.tr.ibs.portal.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.tr.ibs.entity.RespData;
+import com.tr.ibs.portal.model.Role;
+import com.tr.ibs.portal.service.IRoleService;
+
+@RestController
+@RequestMapping("/role")
+public class RoleController {
+
+	@Autowired
+	private IRoleService roleService;
+	
+	@RequestMapping("/getAppRoleTree")
+	public List<Map<String, Object>> getAppRoleTree() {
+		return roleService.getAppRoleTree();
+	}
+	
+	@RequestMapping("/queryRoles4Tree")
+	public RespData queryRoles4Tree(@RequestBody Map<String, Object> map) {
+		return roleService.queryRoles4Tree(map);
+	}
+	
+	@RequestMapping(value="/save")
+	public RespData save(Role role) {
+		return roleService.save(role);
+	}
+	
+	@RequestMapping(value="/del")
+	public RespData del(String ids) {
+		return roleService.del(ids);
+	}
+	
+}

@@ -1,0 +1,102 @@
+package com.tr.ibs.org.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tr.ibs.entity.RespData;
+import com.tr.ibs.entity.Rtsts;
+import com.tr.ibs.org.dao.DepartmentDao;
+import com.tr.ibs.org.model.Department;
+import com.tr.ibs.org.service.IDepartmentService;
+
+@Service
+@Transactional
+public class DepartmentServiceImpl implements IDepartmentService {
+	
+	Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private DepartmentDao departmentDao;
+	
+	@Override
+	public Department get(long id) {
+		return departmentDao.get(id);
+	}
+
+	@Override
+	public List<Department> queryDepartmentsLevel1() {
+		return departmentDao.queryDepartmentsLevel1();
+	}
+
+	@Override
+	public List<Department> queryDepartmentsByParentid(long parentid) {
+		return departmentDao.queryDepartmentsByParentid(parentid);
+	}
+
+	@Override
+	public List<Map<String, Object>> getDepartmentTree() {
+		List<Map<String, Object>> nodes = new ArrayList<Map<String, Object>>();
+		Map<String, Object> root = new HashMap<String, Object>();
+		root.put("id", 0);
+		root.put("text", "组织机构");
+		root.put("children", getDepartmentTreeByParentid(0));
+		nodes.add(root);
+		return nodes;
+	}
+
+	@Override
+	public List<Map<String, Object>> getDepartmentTreeByParentid(long parentid) {
+		List<Map<String, Object>> nodes = new ArrayList<Map<String, Object>>();
+		List<Department> departments = null;
+		if (parentid > 0) {
+			departments = departmentDao.queryDepartmentsByParentid(parentid);
+		} else {
+			departments = departmentDao.queryDepartmentsLevel1();
+		}
+		for (Department department : departments) {
+			Map<String, Object> node = new HashMap<String, Object>();
+			Map<String, Object> attributes = new HashMap<String, Object>();
+			attributes.put("id", department.getId());
+			node.put("id", department.getId());
+			node.put("text", department.getDepname());
+			node.put("attributes", attributes);
+			List<Map<String, Object>> children = getDepartmentTreeByParentid(department.getId());
+			if (children != null && children.size() > 0) {
+				if (department.getParentid() > 0) {
+					node.put("state", "closed");
+				}
+				node.put("children", children);
+			}
+			nodes.add(node);
+		}
+		return nodes;
+	}
+
+	@Override
+	public RespData queryAllDepsByParentid(Map<String, Object> params) {
+		RespData respData = new RespData(new Rtsts("000000", "查询成功！"));
+		int page = (int)params.get("page");
+		int rows = (int)params.get("rows");
+		params.put("begin", (page-1)*rows);
+		
+		Long parentid = (Long)params.get("parentid");
+		if (parentid != null && parentid > 0) {
+			params.put("parentid", parentid);
+			respData.setRtdata("rows", departmentDao.queryAllDepsByParentidWithPage(params));
+			respData.setRtdata("total", departmentDao.countAllDepsByParentid(params));
+		} else {
+			respData.setRtdata("rows", departmentDao.queryListWithPage(params));
+			respData.setRtdata("total", departmentDao.count(params));
+		}
+		return respData;
+	}
+
+}

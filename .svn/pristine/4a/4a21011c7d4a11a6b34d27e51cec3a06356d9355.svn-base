@@ -1,0 +1,12 @@
+package com.tr.ibs.portal.dao;
+
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.tr.ibs.base.IBaseDao;
+
+@Mapper
+public interface ApplicationDao extends IBaseDao<Map<String, Object>> {
+
+}

@@ -1,0 +1,38 @@
+package com.tr.ibs.entity;
+
+import java.util.Map;
+
+import springfox.documentation.annotations.ApiIgnore;
+
+@ApiIgnore
+public class RespData {
+	
+	private Rt rt;
+	
+	private Map<String, Object> extData;
+	
+	public RespData() {
+	}
+
+	
+	public RespData(Rt rt) {
+		this.rt = rt;
+	}
+
+	public Rt getRt() {
+		return rt;
+	}
+
+	public void setRt(Rt rt) {
+		this.rt = rt;
+	}
+
+	public Map<String, Object> getExtData() {
+		return extData;
+	}
+
+	public void setExtData(Map<String, Object> extData) {
+		this.extData = extData;
+	}
+}
+

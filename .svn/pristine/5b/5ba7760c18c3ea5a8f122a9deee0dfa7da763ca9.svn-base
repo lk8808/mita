@@ -1,0 +1,23 @@
+package com.tr.ibs.comm.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.tr.ibs.comm.dao.DictDao;
+import com.tr.ibs.comm.model.Dict;
+import com.tr.ibs.comm.service.IDictService;
+
+@Service
+public class DictServiceImpl implements IDictService {
+	
+	@Autowired
+	private DictDao dictDao;
+
+	@Override
+	public List<Dict> queryDictsByDicttypeid(String dicttypeid) {
+		return dictDao.queryDictsByDicttypeid(dicttypeid);
+	}
+
+}

@@ -1,0 +1,30 @@
+package com.tr.ibs.org.service.impl;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tr.ibs.org.dao.DepposlnkDao;
+import com.tr.ibs.org.model.Depposlnk;
+import com.tr.ibs.org.service.IDepposlnkService;
+
+@Service
+@Transactional
+public class DepposlnkServiceImpl implements IDepposlnkService {
+	
+	Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private DepposlnkDao depposlnkDao;
+
+	@Override
+	public List<Depposlnk> queryByDepid(Integer depid) {	
+		System.out.println(depid);
+		return depposlnkDao.queryByDepid(depid);
+	}
+
+}

@@ -1,0 +1,24 @@
+package com.tr.ibs.portal.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.tr.ibs.portal.service.IApplicationService;
+
+@RestController
+@RequestMapping("/application")
+public class ApplicationController {
+
+	@Autowired
+	private IApplicationService applicationService;
+	
+	@RequestMapping(value="/queryApplicationsByPage")
+	public List<Map<String, Object>> queryApplicationsWithPage(@RequestBody Map<String, Object> map) {
+		return applicationService.queryApplicationsWithPage(map);
+	}
+}

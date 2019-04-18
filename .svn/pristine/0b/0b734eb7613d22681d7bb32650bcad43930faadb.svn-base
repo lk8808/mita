@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <script type="text/javascript">
+            
+            var _DATAGRID_ID = 'datagrid';
+            var _ADD_PARAM = ['editTab', '新增', 'dataForm', '/appgroup/save']
+            var _EDIT_PARAM = ['editTab', '编辑', 'dataForm', '/appgroup/save']
+            var _DEL_PARAM = ['/appgroup/del', 'ids'];
+            
+        </script>
+        <script type="text/javascript" src="/javascript/comm.js"></script>
+    </head>
+    <body>
+        <table id="datagrid">
+        </table>
+        <!-- 工具栏 -->
+        <div id="toolbar" style="padding:5px;height:auto">
+            <div>
+                <a href="javascript:add()" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:'true'" >新增</a>
+                <a href="javascript:edit()" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:'true'">编辑</a>
+                <a href="javascript:del()" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:'true'" >删除</a>
+            </div>
+        </div>
+        <div id="editTab" class="easyui-dialog" style="width:400px;height:200px;padding:10px 20px;"
+             data-options="closed:true,modal:true,buttons:'#editTabBtns'">
+            <form id="dataForm" method="post" style="padding:10px 20px 10px 40px;">
+                <input type="hidden" id="id" name="id" >
+                <table >
+                    <tr>
+                        <td>应用分组名：</td>
+                        <td>
+                            <input name="groupname" class="easyui-textbox" data-options="required:true">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div id="editTabBtns">
+            <a href="javascript:save()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+            <a href="javascript:$('#editTab').dialog('close')" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">取消</a>
+        </div>
+    </body>
+    <script type="text/javascript">
+	    $(function(){
+	        $("#datagrid").datagrid({
+	            url:'/appgroup/queryAppgroups',
+	            loader: datagrid_loader,
+	            toolbar:'#toolbar',
+	            loadMsg:'加载中...',
+	            fit:true,
+	            columns:[[
+	                {field:'id', checkbox:true},
+	                {field:'groupname', title: '应用分组名', width: 200}
+	            ]]
+	        });
+	    });
+	    
+	    function save(){
+	    	$.messager.progress({
+	    		title: '请稍后',
+	    		msg: '正在保存...',
+	    		text: '正在保存...'
+	    	});
+	    	$("#dataForm").form('submit', {
+	    		url: '/appgroup/save',
+	    	    onSubmit: function(){
+	    	        var isValid = $(this).form('validate');
+	    	        if (!isValid){
+	    	            $.messager.progress('close');   
+	    	        }
+	    	        return isValid; 
+	    	    },
+	    	    success: function(retData){
+	    	        $.messager.progress('close'); 
+	    	        retData = eval('(' + retData + ')');
+	    	        if (retData.rt.code == "000000") {
+	    	        	$.messager.alert("消息", "保存成功");
+	    	        	$('#editTab').dialog('close');
+	    	        	reload();
+	    	        } else {
+	    	        	$.messager.alert("消息", "保存失败");
+	    	        }
+	    	    }
+	    	});
+	    }
+
+    </script>
+</html>

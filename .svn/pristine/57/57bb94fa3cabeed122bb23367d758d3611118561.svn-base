@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tr.ibs.portal.dao.MenuDao">
+    
+    <!-- 查询所有的一级菜单 -->
+    <select id="queryMenusLevel1" resultType="com.tr.ibs.portal.model.Menu">
+        select * from portal_menu where delflag='0' and menulevel=1
+    </select>
+    
+    <!-- 通过父id查询菜单 -->
+    <select id="queryMenusByParentid" parameterType="String" resultType="com.tr.ibs.portal.model.Menu">
+        select * from portal_menu
+        WHERE delflag='0' and parentid = #{parentid}
+    </select>
+    
+</mapper>

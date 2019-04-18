@@ -1,0 +1,63 @@
+$(function() {
+	loadList();
+});
+
+/**
+ * 加载列表
+ */
+function loadList() {
+	$("#datagrid").datagrid({
+    	title:"数据列表",
+        url:'/role/queryRoles',
+        loader: datagrid_loader,
+        pagination:true,
+        pageSize:10,
+        pageNumber:1,
+        toolbar:'#toolbar',
+        loadMsg:'加载中...',
+        fit:true,
+        columns:[[
+            {field:'id', checkbox:true},
+            {field:'roleno', title: '角色编号'},
+            {field:'rolename', title: '角色名称'},
+            {field:'isdefault', title: '是否默认', dicttypeid:'comm_yesorno' , formatter: dict_formatter},
+            {field:'remark', title: '备注'},
+        ]]
+    });
+}
+
+/**
+ * 保存
+ */
+function save(){
+    $.messager.progress({
+        title: '请稍后',
+        msg: '正在保存...',
+        text: '正在保存...'
+    });
+    $("#dataForm").form('submit', {
+        url: '/role/save',
+        onSubmit: function(){
+            var isValid = $(this).form('validate');
+            if (!isValid){
+                $.messager.progress('close');   
+            }
+            return isValid; 
+        },
+        success: function(retData){
+            $.messager.progress('close'); 
+            retData = eval('(' + retData + ')');
+            if (retData.rtsts.code == "000000") {
+                $.messager.alert("消息", "保存成功");
+                $('#editTab').dialog('close');
+                loadTree();
+                reload();
+            } else {
+                $.messager.alert("消息", "保存失败");
+            }
+        },
+        error: function(xhr, rtmsg, e) {
+        	$.messager.alert("消息", "程序异常");
+        }
+    });
+}

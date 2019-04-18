@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tr.ibs.portal.dao.RoleauthcfgDao">
+
+    <select id="queryRoleauthcfgsByRoleid" parameterType="int" resultType="map" >
+        SELECT c.*, 
+		       CASE WHEN c.cfgtype='DEP' THEN d.depname 
+		            WHEN c.cfgtype='POS' THEN p.posname 
+		            WHEN c.cfgtype='DEPPOS' THEN CONCAT(d.depname, '-', p.posname)
+		            ELSE '' END lnkname
+		FROM portal_roleauthcfg c
+		LEFT JOIN org_department d ON c.departmentid=d.id
+		LEFT JOIN org_position p ON c.positionid=p.id
+		where roleid=#{roleid}
+    </select>
+
+</mapper>

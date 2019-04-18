@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	</head>
+	<body>
+	</body>
+	<script type="text/javascript">
+		//获取当前网址
+		var curWwwPath = window.document.location.href;
+
+		window.location.href = curWwwPath + "view/login.html";
+	</script>
+</html>

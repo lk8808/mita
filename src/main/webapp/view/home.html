@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="/javascript/comm.js"></script>
+    
+    <style type="text/css">
+		.divmodel{
+			float:left;
+			text-align: center;
+		}
+    </style>
+  </head>
+  
+  <body>
+  </body>
+  
+  <script type="text/javascript">
+  var menudata = [];
+  $.ajax({
+		url: "/homecfg/queryMyhomecfg",
+		type: "POST",
+		success: function(retData){
+			var shtml = "";
+			var onewidth=($("body").width()-12)/2520;
+			onewidth=onewidth.toFixed(4);
+			var oneheight=60;
+			menudata=retData;
+			for(var i = 0 ;i<retData.length ; i++){
+				var twidth=(onewidth*2520/retData[i].widthcell)-6;
+				var theight=oneheight*retData[i].heightcell;
+				var homeurl=retData[i].homeurl;
+				if(homeurl==''||homeurl==null){
+					shtml = shtml+"<div class='divmodel' style='padding:3px;width:"+twidth+"px;height:"+theight+"px;' ></div>";
+				}else{
+					homeurl=homeurl+"?menuid="+retData[i].menuid ;
+					shtml = shtml+"<div class='divmodel' style='padding:3px;width:"+twidth+"px;height:"+theight+"px;' ><iframe src='"+homeurl+"' scrolling='auto' frameborder='0' style='width:100%;height:100%;' ></iframe></div>";
+				}
+			}
+			$("body").html(shtml);
+		}
+	});
+	
+
+	function menumore(menuid){
+		for(var i = 0 ;i<menudata.length ; i++){
+			if(menudata[i].menuid==menuid){
+				window.parent.openMenu(menudata[i].menuid,menudata[i].menuname,menudata[i].menuurl);
+				return;
+			}
+		}
+	}
+  
+  </script>
+  
+</html>

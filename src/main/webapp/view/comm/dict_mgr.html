@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <script type="text/javascript">   
+            var _DATAGRID_ID = 'datagrid';
+            var _ADD_PARAM = ['editTab', '新增', 'dataForm', '/dict/save']
+            var _EDIT_PARAM = ['editTab', '编辑', 'dataForm', '/dict/save']
+            var _DEL_PARAM = ['/dict/del', 'ids'];
+        </script>
+        <script type="text/javascript" src="/javascript/comm.js"></script>
+        <script type="text/javascript" src="dict_mgr.js"></script>
+    </head>
+    <body>
+        <table id="datagrid">
+        </table>
+        <!-- 工具栏 -->
+        <div id="toolbar" style="padding:5px;height:auto">
+            <table>
+                <tr>
+                    <td>数据字典类型id：</td>
+                    <td>
+                        <input id="dicttypeid_q" class="easyui-textbox">
+                    </td>
+                    <td>数据字典类型名称：</td>
+                    <td>
+                        <input id="dicttypename_q" class="easyui-textbox">
+                    </td>
+                    <td align="center">
+                        <a href="javascript:query();" class="easyui-linkbutton" data-options="iconCls:'icon-search'" >查询</a>
+                    </td>
+                </tr>
+            </table>
+            <div>
+                <a href="javascript:add()" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:'true'" >新增</a>
+                <a href="javascript:edit()" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:'true'">编辑</a>
+                <a href="javascript:del()" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:'true'" >删除</a>
+            </div>
+        </div>
+        <div id="editTab" class="easyui-dialog" style="width:500px;height:300px;padding:10px 20px;"
+             data-options="closed:true,modal:true,buttons:'#editTabBtns'">
+            <form id="dataForm" method="post" style="padding:10px 20px 10px 40px;">
+		        <table >
+		            <tr>
+		                <td>数据字典类型id：</td>
+		                <td>
+		                    <input name="dicttypeid" class="easyui-textbox" data-options="required:true">
+		                </td>
+		            </tr>
+		            <tr>
+		                <td>数据字典类型名称：</td>
+		                <td>
+		                    <input name="dicttypename" class="easyui-textbox" data-options="required:true">
+		                </td>
+		            </tr>
+		        </table>
+	        </form>
+	        <table id="editgrid">
+	        </table>
+        </div>
+        <div id="editTabBtns">
+            <a href="javascript:save()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+            <a href="javascript:$('#editTab').dialog('close')" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">取消</a>
+        </div>
+    </body>
+</html>

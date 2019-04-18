@@ -1,0 +1,19 @@
+package com.tr.ibs.portal.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.tr.ibs.portal.model.Menu;
+
+public interface IMenuService {
+
+	public List<Menu> queryMenusLevel1();
+	
+	public List<Menu> queryMenusByParentid(String parentid);
+	
+	public List<Map<String, Object>> getMenuTree(String parentid);
+	
+	public List<Map<String, Object>> getAppMenuTree();
+	
+	public List<Menu> queryMenus4Tree(Map<String, Object> map);
+}

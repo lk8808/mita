@@ -1,0 +1,11 @@
+package com.tr.ibs.portal.dao;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.tr.ibs.base.IBaseDao;
+import com.tr.ibs.portal.model.Appgroup;
+
+@Mapper
+public interface AppgroupDao extends IBaseDao<Appgroup> {
+
+}

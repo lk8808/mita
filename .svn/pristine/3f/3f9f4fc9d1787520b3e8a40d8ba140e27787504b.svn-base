@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <script type="text/javascript">   
+            var _DATAGRID_ID = 'datagrid';
+            var _ADD_PARAM = ['editTab', '新增', 'dataForm', '/menu/save']
+            var _EDIT_PARAM = ['editTab', '编辑', 'dataForm', '/menu/save']
+            var _DEL_PARAM = ['/menu/del', 'ids'];
+        </script>
+        <script type="text/javascript" src="/javascript/comm.js"></script>
+        <script type="text/javascript" src="menu_mgr.js"></script>
+    </head>
+    <body>
+        <div class="easyui-layout" data-options="fit:true">
+            <div data-options="region:'west',split:true,title:'菜单树'" style="width: 200px">
+		        <ul id="tree"></ul>
+		    </div>
+		    <div data-options="region:'center',split:true">
+		        <table id="datagrid">
+		        </table>
+		        <!-- 工具栏 -->
+		        <div id="toolbar" style="padding:5px;height:auto">
+		            <div>
+		                <a href="javascript:add()" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:'true'" >新增</a>
+		                <a href="javascript:edit()" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:'true'">编辑</a>
+		                <a href="javascript:del()" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:'true'" >删除</a>
+		            </div>
+		        </div>
+		    </div>
+        </div>
+    </body>
+</html>
