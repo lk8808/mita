@@ -5,7 +5,7 @@
 <!-- 第二种mybatis逆向生成xml配置 -->    
 <generatorConfiguration>  
     <!-- 需要指明数据库连接器的绝对路径 -->
-    <classPathEntry location="D:\Program Files (x86)\Workspaces\MyEclipse 2017 CI\ibs\mysql-connector-java-5.1.43.jar" />
+    <classPathEntry location="D:\Program Files (x86)\Workspaces\MyEclipse 2017 CI\mita\mysql-connector-java-5.1.43.jar" />
     <context id="mysqlTables" targetRuntime="MyBatis3">    
         
         <commentGenerator>    
@@ -20,9 +20,9 @@
     
         <!-- 数据库链接URL、用户名、密码 -->    
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"    
-                        connectionURL="jdbc:mysql://47.104.184.86:3308/ibs"    
-                        userId="ibs"    
-                        password="ibs1qaz2wsx">    
+                        connectionURL="jdbc:mysql://47.104.184.86:3308/mita"
+                        userId="mita"
+                        password="mita1qaz2wsx">
         </jdbcConnection>    
     
         <!--      
@@ -38,11 +38,11 @@
         	也可以使用“MAVEN”来自动生成，这样生成的代码会在target/generatord-source目录下    
         -->    
            
-       <!--  <javaModelGenerator targetPackage="com.tr.ibs.org.model" targetProject="./src/main/java">    
+       <!--  <javaModelGenerator targetPackage="com.tr.mita.org.model" targetProject="./src/main/java">
             <property name="enableSubPackages" value="true"/>      
             <property name="trimStrings" value="true" />    
         </javaModelGenerator>   -->
-         <javaModelGenerator targetPackage="com.tr.ibs.portal.model" targetProject="./src/main/java">    
+         <javaModelGenerator targetPackage="com.tr.mita.portal.model" targetProject="./src/main/java">
             <property name="enableSubPackages" value="true"/>      
             <property name="trimStrings" value="true" />    
         </javaModelGenerator> 
@@ -56,7 +56,7 @@
     
         <!-- 对应的Mapper接口类文件 -->    
         <!--
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.tr.ibs.base.dao" targetProject="./src/main/java">    
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.tr.mita.base.dao" targetProject="./src/main/java">
             <property name="enableSubPackages" value="true"/>    
         </javaClientGenerator>    
         -->

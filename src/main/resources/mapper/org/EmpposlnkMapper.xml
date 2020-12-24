@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tr.ibs.org.dao.EmpposlnkDao">
+<mapper namespace="com.tr.mita.org.dao.EmpposlnkDao">
     
-    <insert id="insertByDepposlnk" parameterType="map">
-        insert into org_empposlnk(depposlnkid, departmentid, positionid, employeeid, createtime, creator)
-        select id, departmentid, positionid, #{employeeid}, current_timestamp, #{creator}
-        from org_depposlnk where id in 
-        <foreach collection="depposlnkids" index="index" item="item" open="(" separator="," close=")">
-            #{item}
+    <insert id="insertByDepidPosids" parameterType="map">
+        insert into org_empposlnk(departmentid, positionid, employeeid, createtime, creator)
+        values
+        <foreach collection="posids" index="index" item="item" separator=",">
+            (#{depid}, #{item}, #{empid}, current_timestamp, #{creator})
         </foreach>
     </insert>
+
+    <select id="queryPosidsByEmpid" parameterType="Integer" resultType="Integer">
+        SELECT positionid
+        FROM org_empposlnk where employeeid=#{empid}
+    </select>
     
     <delete id="deleteByEmpid" parameterType="Integer">
         delete from org_empposlnk where employeeid=#{empid}

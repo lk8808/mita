@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tr.ibs.portal.dao.MenuDao">
+<mapper namespace="com.tr.mita.portal.dao.MenuDao">
 
-    <select id="get"  resultType="com.tr.ibs.portal.model.Menu">
-        select * from portal_menu where 
+    <select id="get"  resultType="com.tr.mita.portal.model.Menu">
+        select id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
+        from portal_menu where
         <if test="_parameter != null">
         id = ${_parameter}
         </if>
     </select>
 
-    <select id="queryAllList" resultType="com.tr.ibs.portal.model.Menu">
-        select * from portal_menu where delflag='0'
+    <select id="queryAllList" resultType="com.tr.mita.portal.model.Menu">
+        select id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
+        from portal_menu where delflag='0'
+        order by sortno
     </select>
     
     <!-- 查询所有的一级菜单 -->
-    <select id="queryMenusLevel1" resultType="com.tr.ibs.portal.model.Menu">
-        select * from portal_menu where delflag='0' and menulevel=1
+    <select id="queryMenusLevel1" resultType="com.tr.mita.portal.model.Menu">
+        select id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
+        from portal_menu where delflag='0' and menulevel=1
     </select>
     
-    <select id="queryAuthMenusLevel1ByAppid" parameterType="String" resultType="com.tr.ibs.portal.model.Menu">
-        select * from portal_menu where delflag='0' and menulevel=1 and appid=#{appid}
+    <select id="queryAuthMenusLevel1ByAppid" parameterType="String" resultType="com.tr.mita.portal.model.Menu">
+        select id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
+        from portal_menu where delflag='0' and menulevel=1 and appid=#{appid}
     </select>
     
-    <select id="queryListWithPage" parameterType="map" resultType="com.tr.ibs.portal.model.Menu">
-        select * from portal_menu where delflag='0' 
+    <select id="queryListWithPage" parameterType="map" resultType="com.tr.mita.portal.model.Menu">
+        select id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
+        from portal_menu where delflag='0'
+        order by sortno
         limit #{begin}, #{rows}
     </select>
     <select id="count" parameterType="map" resultType="Integer">
@@ -31,20 +38,24 @@
     </select>
     
     <!-- 通过父id查询菜单 -->
-    <select id="queryMenusByParentid" parameterType="String" resultType="com.tr.ibs.portal.model.Menu">
-        select * from portal_menu
+    <select id="queryMenusByParentid" parameterType="String" resultType="com.tr.mita.portal.model.Menu">
+        select id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
+        from portal_menu
         WHERE delflag='0' and parentid = #{parentid}
+        order by sortno
     </select>
     
     <!-- 通过父id查询菜单 -->
-    <select id="querySubMenusByParentidWithPage" parameterType="map" resultType="com.tr.ibs.portal.model.Menu">
-        SELECT * FROM portal_menu WHERE ID IN (
+    <select id="querySubMenusByParentidWithPage" parameterType="map" resultType="com.tr.mita.portal.model.Menu">
+        SELECT id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
+        FROM portal_menu WHERE ID IN (
 		    SELECT id FROM (
 		        SELECT id, parentid, IF(FIND_IN_SET(parentid, @pids) > 0, @pids := CONCAT(@pids, ',', id), 0) pids
 		        FROM portal_menu, (SELECT @pids := #{parentid}) var
 		        WHERE FIND_IN_SET(parentid, @pids) > 0
 		    ) tmp
 		) AND ID != #{parentid} and delflag='0'
+        order by sortno
 		limit #{begin}, #{rows}
     </select>
     <select id="countSubMenusByParentid" parameterType="map" resultType="Integer">
@@ -58,8 +69,9 @@
     </select>
     
     <!-- 通过应用id查询菜单 -->
-    <select id="querySubMenusByAppidWithPage" parameterType="map" resultType="com.tr.ibs.portal.model.Menu">
-        SELECT * FROM portal_menu WHERE ID IN (
+    <select id="querySubMenusByAppidWithPage" parameterType="map" resultType="com.tr.mita.portal.model.Menu">
+        SELECT id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
+        FROM portal_menu WHERE ID IN (
             SELECT id FROM portal_menu WHERE appid=#{parentid}
             union
             SELECT id FROM (
@@ -69,6 +81,7 @@
             ) tmp
         ) and delflag='0'
         limit #{begin}, #{rows}
+        order by sortno
     </select>
     <select id="countSubMenusByAppid" parameterType="map" resultType="Integer">
         select count(1) from portal_menu where ID IN (
@@ -82,29 +95,32 @@
         ) and delflag='0'
     </select>
     
-    <select id="queryMenusByAppid" resultType="com.tr.ibs.portal.model.Menu">
-        select * from portal_menu 
+    <select id="queryMenusByAppid" resultType="com.tr.mita.portal.model.Menu">
+        select id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
+        from portal_menu
         where delflag='0' and appid=#{appid} and menulevel=1
+        order by sortno
     </select>
     
-    <insert id="insert" parameterType="com.tr.ibs.portal.model.Menu">
-        INSERT portal_menu(menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark, delflag)
-        VALUES(#{menuno}, #{menuname}, #{parentid}, #{menulevel}, #{menuurl}, #{appid}, #{sortno}, #{menutype}, #{remark}, #{delflag})
+    <insert id="insert" parameterType="com.tr.mita.portal.model.Menu">
+        INSERT portal_menu(menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark, createtime, creator, delflag)
+        VALUES(#{menuno}, #{menuname}, #{parentid}, #{menulevel}, #{menuurl}, #{appid}, #{sortno}, #{menutype}, #{remark}, #{createtime}, #{creator}, #{delflag})
     </insert>
     
-    <update id="update" parameterType="com.tr.ibs.portal.model.Menu">
+    <update id="update" parameterType="com.tr.mita.portal.model.Menu">
         update portal_menu
         <trim prefix="set" suffixOverrides=",">  
-           <if test="menuno != null">menuno=#{menuno},</if>
-           <if test="menuname != null">menuname=#{menuname},</if>
-           <if test="parentid != null">parentid=#{parentid},</if>
-           <if test="menulevel != null">menulevel=#{menulevel},</if>
-           <if test="menuurl != null">menuurl=#{menuurl},</if>
-           <if test="appid != null">appid=#{appid},</if>
-           <if test="sortno != null">sortno=#{sortno},</if>
-           <if test="menutype != null">menutype=#{menutype},</if>
-           <if test="remark != null">remark=#{remark},</if>
-           <if test="delflag != null">delflag=#{delflag},</if>
+            <if test="menuno != null">menuno=#{menuno},</if>
+            <if test="menuname != null">menuname=#{menuname},</if>
+            <if test="parentid != null">parentid=#{parentid},</if>
+            <if test="menulevel != null">menulevel=#{menulevel},</if>
+            <if test="menuurl != null">menuurl=#{menuurl},</if>
+            <if test="appid != null">appid=#{appid},</if>
+            <if test="sortno != null">sortno=#{sortno},</if>
+            <if test="menutype != null">menutype=#{menutype},</if>
+            <if test="remark != null">remark=#{remark},</if>
+            <if test="modifytime != null">modifytime=#{modifytime},</if>
+            <if test="modifier != null">modifier=#{modifier},</if>
         </trim>
         where id = #{id}
     </update>
@@ -116,4 +132,11 @@
             #{item}
         </foreach>
     </update>
+    
+    <select id="queryAuthHomeMenus" parameterType="String" resultType="com.tr.mita.portal.model.Menu">
+        select id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
+        from portal_menu where delflag='0' and homeurl is not null and homeurl!=''
+    </select>
+    
+    
 </mapper>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>  
 <configuration> 
-	<property name="APP_NAME" value="ibs"/>
+	<property name="APP_NAME" value="mita"/>
     <contextName>${APP_NAME}</contextName> 
     
     <!-- 控制台彩色打印 -->
@@ -15,7 +15,7 @@
     <property name="FILE_LOG_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
 
-    <property name="LOG_FILE" value="/data/logs/${APP_NAME}"/>
+    <property name="LOG_FILE" value="${APP_NAME}"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -42,6 +42,6 @@
     <root level="INFO">     	  
         <appender-ref ref="CONSOLE"/>
     </root>	    
-    <logger name="com.tr.ibs" level="INFO"/>    
+    <logger name="com.tr.mita" level="INFO"/>
 	
 </configuration>

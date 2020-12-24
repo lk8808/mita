@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Created-By: IntelliJ IDEA
+Built-By: lk
+Build-Jdk: 1.8.0_131
+Implementation-Title: mita
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: com.tr
+Main-Class: ${start-class}
+

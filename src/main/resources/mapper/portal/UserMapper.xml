@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tr.mita.portal.dao.UserDao">
+
+    <!-- 根据id获得用户 -->
+    <select id="get" parameterType="int" resultType="com.tr.mita.portal.model.User">
+        select * from portal_user
+        WHERE delflag='0' and id = #{id}
+    </select>
+    
+    <!-- 根据username获得用户 -->
+    <select id="getUserByUsername" parameterType="String" resultType="com.tr.mita.portal.model.User">
+        select * from portal_user
+        WHERE delflag='0' and username = #{username}
+    </select>
+
+    <select id="expand" parameterType="com.tr.mita.portal.model.User" resultType="com.tr.mita.portal.model.User">
+        select * from portal_user where delflag='0'
+        <if test="id != null and id > 0">and id=#{id}</if>
+        <if test="username != null">and username=#{username}</if>
+        limit 1 
+    </select>
+
+	<!-- 查询所有的用户列表 -->
+	<select id="queryAllList" resultType="com.tr.mita.portal.model.User">
+		select * from portal_user where delflag='0'
+	</select>
+	
+	<!-- 查询用户列表 -->
+	<select id="queryListWithPage" parameterType="map" resultType="com.tr.mita.portal.model.User">
+	    select * from portal_user where delflag='0' 
+        limit #{begin}, #{rows}
+	</select>
+	<select id="count" parameterType="map" resultType="Integer">
+        select count(1) from portal_user where delflag='0' 
+    </select>
+    
+    <!-- 通过部门id查询部门及所有子部门下的用户 -->
+    <select id="queryAllUsersByDepidWithPage" parameterType="map" resultType="com.tr.mita.portal.model.User">
+        SELECT u.* FROM portal_user u
+        LEFT JOIN org_employee e ON e.id=u.employeeid and e.delflag='0'
+        WHERE e.departmentid IN (
+            select #{depid}
+            union
+            SELECT id FROM (
+                SELECT id, parentid, IF(FIND_IN_SET(parentid, @pids) > 0, @pids := CONCAT(@pids, ',', id), 0) pids
+                FROM org_department, (SELECT @pids := #{depid}) var
+                WHERE FIND_IN_SET(parentid, @pids) > 0
+            ) tmp
+        ) and u.delflag='0'
+        limit #{begin}, #{rows}
+    </select>
+    <select id="countAllUsersByDepid" parameterType="map" resultType="Integer">
+        SELECT count(1) FROM portal_user u
+        LEFT JOIN org_employee e ON e.id=u.employeeid and e.delflag='0' 
+        WHERE departmentid IN (
+            select #{depid}
+            union
+            SELECT id FROM (
+                SELECT id, parentid, IF(FIND_IN_SET(parentid, @pids) > 0, @pids := CONCAT(@pids, ',', id), 0) pids
+                FROM org_department, (SELECT @pids := #{depid}) var
+                WHERE FIND_IN_SET(parentid, @pids) > 0
+            ) tmp
+        ) and u.delflag='0'
+    </select>
+    
+    <insert id="insert" parameterType="com.tr.mita.portal.model.User" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into portal_user
+        (employeeid, username, passwd, telephone, enableflag, passwdduedate, errornum, logintime,
+		 createtime, modifytime, creator, modifier, delflag)
+        values
+        (#{employeeid}, #{username}, #{passwd}, #{telephone}, #{enableflag}, #{passwdduedate}, #{errornum}, #{logintime},
+		 #{createtime}, #{modifytime}, #{creator}, #{modifier}, #{delflag})
+    </insert>
+    
+    <update id="update" parameterType="com.tr.mita.portal.model.User">
+        update portal_user
+        <trim prefix="set" suffixOverrides=",">  
+           <if test="employeeid != null">employeeid=#{employeeid},</if>
+           <if test="username != null">username=#{username},</if>
+           <if test="passwd != null">passwd=#{passwd},</if>
+           <if test="telephone != null">telephone=#{telephone},</if>
+           <if test="desktopstyle != null">desktopstyle=#{desktopstyle},</if>
+           <if test="enableflag != null">enableflag=#{enableflag},</if>
+           <if test="passwdduedate != null">passwdduedate=#{passwdduedate},</if>
+           <if test="errornum != null">errornum=#{errornum},</if>
+           <if test="logintime != null">logintime=#{logintime},</if>
+           <if test="createtime != null">createtime=#{createtime},</if>
+           <if test="modifytime != null">modifytime=#{modifytime},</if>
+           <if test="creator != null">creator=#{creator},</if>
+           <if test="modifier != null">modifier=#{modifier},</if>
+           <if test="delflag != null">delflag=#{delflag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    
+    <update id="updateByEmployeeid" parameterType="com.tr.mita.portal.model.User">
+        update portal_user
+        <trim prefix="set" suffixOverrides=",">  
+           <if test="username != null">username=#{username},</if>
+           <if test="passwd != null">passwd=#{passwd},</if>
+           <if test="telephone != null">telephone=#{telephone},</if>
+           <if test="desktopstyle != null">desktopstyle=#{desktopstyle},</if>
+           <if test="enableflag != null">enableflag=#{enableflag},</if>
+           <if test="passwdduedate != null">passwdduedate=#{passwdduedate},</if>
+           <if test="errornum != null">errornum=#{errornum},</if>
+           <if test="logintime != null">logintime=#{logintime},</if>
+           <if test="createtime != null">createtime=#{createtime},</if>
+           <if test="modifytime != null">modifytime=#{modifytime},</if>
+           <if test="creator != null">creator=#{creator},</if>
+           <if test="modifier != null">modifier=#{modifier},</if>
+           <if test="delflag != null">delflag=#{delflag},</if>
+        </trim>
+        where employeeid = #{employeeid}
+    </update>
+    
+    <update id="delBatchByEmpids">
+        update portal_user set delflag='1'  
+        where employeeid in
+        <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+</mapper>

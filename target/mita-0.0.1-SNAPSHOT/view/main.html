@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	  	<meta charset="UTF-8">
+	    <title>微信后台管理系统</title>
+	    <script type="text/javascript">   
+            var _UNIQUE_URL = '/employee/unique';
+        </script>
+	    <script type="text/javascript" src="/javascript/comm.js"></script>
+	    <script type="text/javascript" src="main.js"></script>
+		<link rel="stylesheet" type="text/css" href="/css/main.css">
+	</head>
+	<!--1. 在整个页面创建布局面板-->
+	<body class="easyui-layout" data-options="fit:true">
+	    <!--1.1 egion="north"，指明高度，可以自适应-->
+        <div data-options="region:'north',split:false" class="main_header">
+	        <div class="leftlogo">
+	            <!-- <div class="logoimg"></div> -->
+	            <div class="titlename">综合管理平台</div>
+	        </div>
+	        
+	        <div class="" id="appnavpanel" >
+			    <span class="navleftarrow"></span>
+		        <div>
+		            <!--右上方app导航条（中间主体）-->
+		            <ul class="" id="appnavcontent">
+		            </ul>
+		        </div >
+		        <!--右上方app导航条（右放箭头）-->
+			    <span class="navrightarrow"></span>
+		    </div>
+		    
+<!-- 		    <div id="allapppanel" class="easyui-panel" title="Basic Panel"  data-options="closed:true" style="width:700px;height:40px;padding:1px;"> -->
+<!-- 			</div> -->
+			
+	        <div class="rightop">
+	        	<a href="javascript:void(0)"  class="easyui-menubutton" data-options="iconCls:'fa fa-user fa-fw ',hasDownArrow:false" style="color:#fff" onclick="openShowUserInfoWin()"  >
+	        		<span id ="username"></span>
+	        	</a>|
+				<a href="javascript:void(0)" class="easyui-menubutton" data-options="iconCls:'fa fa-cog fa-fw ',menu:'#sys-sets'" style="color:#fff">设置</a>|
+				<a href="javascript:void(0)" onclick="logout()" class="easyui-menubutton" data-options="iconCls:'fa fa-sign-out fa-fw ',hasDownArrow:false" style="color:#fff">注销</a>
+				<div id="sys-sets" style="width:80px;">
+					<div data-options="iconCls:'fa fa-info-circle'" onclick="openModifyUserInfoWin()" >个人信息</div>
+				    <div data-options="iconCls:'fa fa-key'" onclick="openModifyPwdWin()" >修改密码</div>
+				    <div data-options="iconCls:'fa fa-home'" onclick="openHomeSetWin()" >首页设置</div>
+			    </div>
+	        </div>
+	    </div>
+	    
+	    <!--1.2 region="west",必须指明宽度-->
+	    <div  data-options="region:'west',split:true,iconCls:'menuicon'"  title="功能菜单" style="width:200px;" >
+	        <div id="RightAccordion" class="easyui-accordion">
+	        </div>
+        </div>
+	    
+	    <!--1.3region="center",这里的宽度和高度都是由周边决定，不用设置-->
+	    <div data-options="region:'center'" style="background:#eee;">
+	        <div id="menuTab" class="easyui-tabs" data-options="fit:true,border:false,tools:'#tab-tools'" style="padding-top: 0px;">
+ 			    <div title="主页" id="homepanel" data-options="iconCls:'homeicon',selected:true"  style="padding:1px;overflow:hidden;"> 
+			    </div>
+		    </div>
+		    <div id="rcmenu" class="easyui-menu" style="">    
+			    <div id="close">关闭</div>   
+			    <div id="closeother">关闭其他</div>  
+	            <div id="closeall">关闭全部</div>      
+        	</div>
+	    </div>
+	    <div id="tab-tools">
+			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'fa fa-home fa-fw'" onclick="gohomePanel()"></a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'fa fa-refresh fa-fw'" onclick="refreshPanel()"></a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'fa fa-remove fa-fw'" onclick="removePanel()"></a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'fa fa-arrows-alt fa-fw'" onclick="screenExpand()"></a>
+		</div>
+	    
+	    <!--1.4 region="east",必须指明宽度-->
+	    <!-- 
+	    <div region="east"  style="width:100px;">页面右侧</div>
+	     -->
+	    
+	    <!--1.5 region="south"，指明高度，可以自适应-->
+	    <div data-options="region:'south',split:false" class="main_footer" >
+	            <p>Copyright &copy; 上海同儒信息技术有限公司</p>
+        </div>
+        
+		<div id="allappwin">
+			<div>
+	            <ul class="" id="allappcontent">
+	            </ul>
+            </div >
+		</div>
+		
+		<div id="modifyUserInfoWin" class="easyui-dialog" title="修改个人信息" data-options="iconCls:'fa fa-info-circle',closed:true,buttons:'#modifyUserInfoBtns'" style="width:650px;height:400px;padding:10px">
+            <form id="userInfoSetDataForm" method="post" style="padding:10px 20px 10px 40px;" enctype="multipart/form-data">
+                <input type="hidden" id="id" name="id" >
+                <table >
+                    <tr>
+				        <td rowspan="4">照片：</td>
+                        <td rowspan="4">
+                            <div id="imgdiv">
+                                <img id="img" width="100px" height="100px"/>
+                            </div>
+                            <input id="file_upload" name="photo_ext" type="file" onchange="change_photo();" />
+                        </td>
+				    </tr>
+				    <tr>
+                        <td >员工编号：</td>
+                        <td >
+                            <input  name="empno" class="easyui-textbox" 
+                                   data-options="required:true,disabled:true"
+                                   validType="unique['empno']">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>员工名称：</td>
+                        <td>
+                            <input  name="empname" class="easyui-textbox" 
+                                   data-options="required:true,disabled:true"
+                                   validType="unique['empname']">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>身份证：</td>
+                        <td>
+                            <input name="idnum" class="easyui-textbox"
+                                   data-options="validType:'idcard',onChange:idnumChange">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>出生日期：</td>
+                        <td >
+                            <input id="birthday" name="birthday" class="easyui-datebox" >
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td>性别：</td>
+                        <td>
+                            <input id="gender" name="gender" class="easyui-combobox dict" 
+                                   data-options="dicttypeid:'comm_gender', panelHeight:'auto'">
+                        </td>
+                    	<td>学历：</td>
+                        <td>
+                            <input name="education" class="easyui-combobox dict" 
+                                   data-options="dicttypeid:'comm_education', panelHeight:'auto'">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>手机：</td>
+                        <td>
+                            <input name="telephone" class="easyui-textbox" 
+                                   data-options="validType:'telephone'">
+                        </td>
+                        <td>家庭电话：</td>
+                        <td>
+                            <input name="homephone" class="easyui-textbox" 
+                                   data-options="validType:'phone'">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>电子邮件：</td>
+                        <td colspan="3">
+                            <input name="email" class="easyui-textbox" style="width:300px"
+                                   data-options="validType:'email'">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+		</div>
+		<div id="modifyUserInfoBtns">
+            <a id="modifyUserInfoSavebtn" href="javascript:saveUserInfo()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+            <a href="javascript:$('#modifyUserInfoWin').dialog('close')" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">取消</a>
+        </div>
+		
+		<div id="modifyPwdWin" class="easyui-dialog" title="修改密码" data-options="iconCls:'fa fa-key',closed:true,buttons:'#modifyPwdBtns'" style="width:400px;height:260px;padding:10px">
+			<form id="modifyPwdDataForm" method="post" style="padding:10px 20px 10px 40px;" enctype="multipart/form-data">
+                <input type="hidden" id="id" name="id" >
+                <table >
+                	<tr>
+                        <td >当前用户：</td>
+                        <td >
+                            <input id="currentUserInfo" name="currentUserInfo" class="easyui-textbox" 
+                                   data-options="required:true,disabled:true" >
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>输入旧密码：</td>
+                        <td>
+                            <input id="oldpwd" name="oldpwd" class="easyui-textbox" 
+                                   data-options="required:true" type="password"  >
+                        </td>
+                    </tr>
+				    <tr>
+                        <td >输入新密码：</td>
+                        <td >
+                            <input id="pwd"  name="pwd" class="easyui-textbox" 
+                                   data-options="required:true" type="password"  >
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>确认新密码：</td>
+                        <td>
+                            <input id="pwdcomfim"  name="pwdcomfim" class="easyui-textbox" 
+                                   data-options="required:true" type="password"  >
+                        </td>
+                    </tr>
+                </table>
+            </form>
+		</div>
+		<div id="modifyPwdBtns">
+            <a href="javascript:saveModifyPwd()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+            <a href="javascript:$('#modifyPwdWin').dialog('close')" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">取消</a>
+        </div>
+		
+		<div id="homeSetWin" class="easyui-dialog" title="首页设置" data-options="iconCls:'fa fa-home',closed:true,modal:true,buttons:'#homeSetBtns'" style="width:600px;height:450px;padding:10px">
+			<!-- <table id="dg" class="easyui-datagrid" style="width:100%;height:auto"
+				data-options="iconCls: 'icon-edit',singleSelect: true,toolbar: '#tb',
+				method: 'get',onClickRow: onClickRow">
+				<thead>
+					<tr>
+						<th data-options="field:'menuid',width:200">功能</th>
+						<th data-options="field:'widthcell',width:110,align:'right',editor:'numberbox'">宽（占几分之一）</th>
+						<th data-options="field:'heightcell',width:80,align:'right',editor:'numberbox'">高（单位高）</th>
+						<th data-options="field:'sortno',width:60,editor:'textbox'">排序</th>
+					</tr>
+				</thead>
+			</table> -->
+			<table id="homesetgrid">
+            </table>
+		</div>
+		<div id="homeSetBtns" style="height:auto">
+			<a href="javascript:saveHomeSet()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+            <a href="javascript:$('#homeSetWin').dialog('close')" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">取消</a>
+		</div>
+	</body>
+	
+	<script type="text/javascript">
+	
+	/* 
+	
+	var editIndex = undefined;
+	function endEditing(){
+		if (editIndex == undefined){return true}
+		if ($('#dg').datagrid('validateRow', editIndex)){
+			var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'productid'});
+			var productname = $(ed.target).combobox('getText');
+			$('#dg').datagrid('getRows')[editIndex]['productname'] = productname;
+			$('#dg').datagrid('endEdit', editIndex);
+			editIndex = undefined;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	function onClickRow(index){
+		if (editIndex != index){
+			if (endEditing()){
+				$('#dg').datagrid('selectRow', index)
+						.datagrid('beginEdit', index);
+				editIndex = index;
+			} else {
+				$('#dg').datagrid('selectRow', editIndex);
+			}
+		}
+	}
+
+	function appendHomeSet(){
+		if (endEditing()){
+			$('#dg').datagrid('appendRow',{widthcell:3,heightcell:4,sortno:10});
+			editIndex = $('#dg').datagrid('getRows').length-1;
+			$('#dg').datagrid('selectRow', editIndex)
+					.datagrid('beginEdit', editIndex);
+		}
+	}
+	
+	function removeHomeSet(){
+		if (editIndex == undefined){return}
+		$('#dg').datagrid('cancelEdit', editIndex)
+				.datagrid('deleteRow', editIndex);
+		editIndex = undefined;
+	}
+	
+	function acceptHomeSet(){
+		if (endEditing()){
+			$('#dg').datagrid('acceptChanges');
+		}
+	}
+		 */
+	</script>
+</html>
+

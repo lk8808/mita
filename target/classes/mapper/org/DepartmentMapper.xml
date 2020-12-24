@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tr.ibs.org.dao.DepartmentDao">
+<mapper namespace="com.tr.mita.org.dao.DepartmentDao">
 
-    <select id="get"  resultType="com.tr.ibs.org.model.Department">
-        select * from org_department where 
+    <resultMap id="result1" type="com.tr.mita.org.model.Department" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="depno" property="depno" jdbcType="VARCHAR" />
+        <result column="depname" property="depname" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="parentid" property="parentid" jdbcType="INTEGER" />
+        <result column="deppath" property="deppath" jdbcType="VARCHAR" />
+        <result column="deplevel" property="deplevel" jdbcType="INTEGER" />
+        <result column="deptype" property="deptype" jdbcType="VARCHAR" />
+        <result column="sortno" property="sortno" jdbcType="INTEGER" />
+        <collection property="posids" ofType="java.lang.Integer">
+            <constructor>
+                <arg column="posids"/>
+            </constructor>
+        </collection>
+    </resultMap>
+
+    <select id="get"  resultType="com.tr.mita.org.model.Department">
+        select * from org_department where
         <if test="_parameter != null">
         id = ${_parameter}
         </if>
     </select>
-    <select id="expand" parameterType="com.tr.ibs.org.model.Department"  resultType="com.tr.ibs.org.model.Department">
+    <select id="expand" parameterType="com.tr.mita.org.model.Department" resultType="com.tr.mita.org.model.Department">
         select * from org_department where delflag='0'
         <if test="id != null and id > 0">and id=#{id}</if>
         <if test="depno != null">and depno=#{depno}</if>
@@ -16,34 +33,26 @@
         limit 1 
     </select>
     
-    <select id="queryListWithPage" parameterType="map" resultType="com.tr.ibs.org.model.Department">
-        select * from org_department where delflag='0' 
-        <if test="sort != null">
-            order by ${sort} 
-            <if test="order != null">${order}</if>
-        </if>
-        limit #{begin}, #{rows}
-    </select>
-    <select id="count" parameterType="map" resultType="Integer">
-        select count(1) from org_department where delflag='0' 
-    </select>
-    
     <!-- 查询所有的一级菜单 -->
-    <select id="queryDepartmentsLevel1" resultType="com.tr.ibs.org.model.Department">
-        select * from org_department 
-        where delflag='0' and deplevel=1
-        order by sortno
+    <select id="queryDepartmentsLevel1" resultMap="result1">
+        select d.*, l.positionid as posids
+        from org_department d
+        left join org_depposlnk l on d.id=l.departmentid
+        where d.delflag='0' and d.deplevel=1
+        order by d.sortno
     </select>
 	
 	<!-- 通过父id查询下级菜单 -->
-    <select id="queryDepartmentsByParentid" parameterType="long" resultType="com.tr.ibs.org.model.Department">
-        select * from org_department
-        where delflag='0' and parentid = #{parentid}
-        order by sortno
+    <select id="queryDepartmentsByParentid" parameterType="int" resultMap="result1">
+        select d.*, l.positionid as posids
+        from org_department d
+        left join org_depposlnk l on d.id=l.departmentid
+        where d.delflag='0' and d.parentid = #{parentid}
+        order by d.sortno
     </select>
     
     <!-- 通过父id查询所有下级菜单 -->
-    <select id="queryAllDepsByParentidWithPage" parameterType="map" resultType="com.tr.ibs.org.model.Department">
+    <select id="queryAllDepsByParentidWithPage" parameterType="map" resultType="com.tr.mita.org.model.Department">
         SELECT * FROM org_department WHERE ID IN (
             SELECT id FROM (
                 SELECT id, parentid, IF(FIND_IN_SET(parentid, @pids) > 0, @pids := CONCAT(@pids, ',', id), 0) pids
@@ -67,7 +76,7 @@
         ) and delflag='0'
     </select>
 
-    <insert id="insert" parameterType="com.tr.ibs.org.model.Department" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <insert id="insert" parameterType="com.tr.mita.org.model.Department" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         INSERT org_department
         (depno, depname, remark, address, workphone, parentid, deppath, deplevel, managerid, managername, 
          principalid, principal, deptype, virtualflag, sortno, createtime, modifytime, creator, modifier, delflag)
@@ -76,7 +85,7 @@
          #{principalid}, #{principal}, #{deptype}, #{virtualflag}, #{sortno}, #{createtime}, #{modifytime}, #{creator}, #{modifier}, #{delflag})
     </insert>
     
-    <update id="update" parameterType="com.tr.ibs.org.model.Department">
+    <update id="update" parameterType="com.tr.mita.org.model.Department">
         update org_department
         <trim prefix="set" suffixOverrides=",">  
            <if test="depno != null">depno=#{depno},</if>

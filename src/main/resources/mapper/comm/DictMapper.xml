@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tr.ibs.comm.dao.DictDao">
+<mapper namespace="com.tr.mita.comm.dao.DictDao">
 
-    <select id="get" resultType="com.tr.ibs.comm.model.Dict">
+    <select id="get" resultType="com.tr.mita.comm.model.Dict">
         select * from comm_dict where dicttypeid=#{0} and dictid=#{1}
     </select>
 
     <!-- 查询数据字典 -->
-    <select id="queryDictsByDicttypeid" resultType="com.tr.ibs.comm.model.Dict">
+    <select id="queryDictsByDicttypeid" resultType="com.tr.mita.comm.model.Dict">
         select * from comm_dict where dicttypeid=#{dicttypeid} order by sortno
     </select>
     

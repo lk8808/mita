@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 	
 	<groupId>com.tr</groupId>
-	<artifactId>ibs</artifactId>
+	<artifactId>mita</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	
-    <name>ibs</name>
+    <name>mita</name>
   
   	<!-- 1、设置Spring boot的parent -->  
 	<parent>  
@@ -86,6 +86,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.11</version>
         </dependency>
         <!-- dbcp 连接池引入 -->
         <dependency>
@@ -112,6 +113,11 @@
 	        <groupId>com.google.code.gson</groupId>  
 	        <artifactId>gson</artifactId>  
 	    </dependency>
+        <!-- redis依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
         
         <!-- 配置swagger依赖 -->
         <dependency>
@@ -134,6 +140,7 @@
         <dependency>
          <groupId>org.springframework.boot</groupId>
          <artifactId>spring-boot-devtools</artifactId>
+         <scope>runtime</scope>
          <optional>true</optional> 
         </dependency>
       
@@ -151,7 +158,11 @@
             <!-- 3、添加Spring boot的插件 -->  
             <plugin>  
                 <groupId>org.springframework.boot</groupId>  
-                <artifactId>spring-boot-maven-plugin</artifactId>  
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <addResources>true</addResources>
+                </configuration>
             </plugin>  
             
         </plugins>  

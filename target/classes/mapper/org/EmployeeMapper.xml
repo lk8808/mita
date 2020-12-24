@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tr.ibs.org.dao.EmployeeDao">
+<mapper namespace="com.tr.mita.org.dao.EmployeeDao">
 
-    <select id="get"  resultType="com.tr.ibs.org.model.Employee">
+    <select id="get"  resultType="com.tr.mita.org.model.Employee">
         select * from org_employee where 
         <if test="_parameter != null">
         id = ${_parameter}
         </if>
     </select>
-    <select id="expand" parameterType="com.tr.ibs.org.model.Employee"  resultType="com.tr.ibs.org.model.Employee">
+    <select id="expand" parameterType="com.tr.mita.org.model.Employee" resultType="com.tr.mita.org.model.Employee">
         select * from org_employee where delflag='0'
         <if test="id != null and id > 0">and id=#{id}</if>
         <if test="empno != null">and empno=#{empno}</if>
@@ -16,34 +16,49 @@
         limit 1 
     </select>
     
-    <select id="queryListWithPage" parameterType="map" resultType="com.tr.ibs.org.model.Employee">
-        select * from org_employee where delflag='0' 
-        <if test="sort != null">
-            order by ${sort} 
-            <if test="order != null">${order}</if>
+    <select id="queryListWithPage" parameterType="map" resultType="com.tr.mita.org.model.Employee">
+        select e.*, d.depname
+        from org_employee e
+        left join org_department d on e.departmentid=d.id
+        where e.delflag='0'
+        <if test="empname != null and empname != ''">
+            and e.empname like '${empname}%'
         </if>
-        limit #{begin}, #{rows}
+        order by e.departmentid, e.sortno
+        limit ${(page-1)*limit},${limit}
     </select>
     <select id="count" parameterType="map" resultType="Integer">
-        select count(1) from org_employee where delflag='0' 
+        select count(1) from org_employee where delflag='0'
+        <if test="empname != null and empname != ''">
+            and empname like '${empname}%'
+        </if>
     </select>
     
     <!-- 通过部门id查询部门下的员工 -->
-    <select id="queryEmpsByDepidWithPage" parameterType="map" resultType="com.tr.ibs.org.model.Employee">
-        SELECT * FROM org_employee WHERE departmentid = #{depid}
-        <if test="sort != null">
-            order by ${sort} 
-            <if test="order != null">${order}</if>
+    <select id="queryEmpsByDepidWithPage" parameterType="map" resultType="com.tr.mita.org.model.Employee">
+        select e.*, d.depname
+        from org_employee e
+        left join org_department d on e.departmentid=d.id
+        where e.delflag='0' and e.departmentid = #{depid}
+        <if test="empname != null and empname != ''">
+            and e.empname like '${empname}%'
         </if>
-        limit #{begin}, #{rows}
+        order by d.deppath, e.sortno
+        limit ${(page-1)*limit},${limit}
     </select>
     <select id="countEmpsByDepid" parameterType="map" resultType="Integer">
         SELECT count(1) from org_employee WHERE departmentid = #{depid} and delflag='0'
+        <if test="empname != null and empname != ''">
+            and empname like '${empname}%'
+        </if>
     </select>
     
     <!-- 通过部门id查询部门及所有子部门下的员工 -->
-    <select id="queryAllEmpsByDepidWithPage" parameterType="map" resultType="com.tr.ibs.org.model.Employee">
-        SELECT * FROM org_employee WHERE departmentid IN (
+    <select id="queryAllEmpsByDepidWithPage" parameterType="map" resultType="com.tr.mita.org.model.Employee">
+        select e.*, d.depname
+        from org_employee e
+        left join org_department d on e.departmentid=d.id
+        WHERE e.delflag='0' and e.departmentid IN (
             select #{depid}
             union
             SELECT id FROM (
@@ -51,12 +66,9 @@
                 FROM org_department, (SELECT @pids := #{depid}) var
                 WHERE FIND_IN_SET(parentid, @pids) > 0
             ) tmp
-        ) and delflag='0'
-        <if test="sort != null">
-            order by ${sort} 
-            <if test="order != null">${order}</if>
-        </if>
-        limit #{begin}, #{rows}
+        )
+        order by d.deppath, e.sortno
+        limit ${(page-1)*limit},${limit}
     </select>
     <select id="countAllEmpsByDepid" parameterType="map" resultType="Integer">
         SELECT count(1) FROM org_employee WHERE departmentid IN (
@@ -70,41 +82,29 @@
         ) and delflag='0'
     </select>
 
-    <insert id="insert" parameterType="com.tr.ibs.org.model.Employee" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <insert id="insert" parameterType="com.tr.mita.org.model.Employee" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into org_employee
-        (empno, empname, idnum, gender, education, birthday, homephone, telephone, email, entrydate, leavedate, 
-         retiredate, photo, departmentid, cardno, empsts, custid, sortno, createtime, modifytime, creator, modifier, delflag) 
+        (empno, empname, idnum, gender, birthday, telephone, photo, departmentid, empsts, sortno, createtime, modifytime, creator, modifier, delflag)
         values
-        (#{empno}, #{empname}, #{idnum}, #{gender}, #{education}, #{birthday}, #{homephone}, #{telephone}, 
-         #{email}, #{entrydate}, #{leavedate}, #{retiredate}, #{photo}, #{departmentid}, #{cardno}, 
-         #{empsts}, #{custid}, #{sortno}, #{createtime}, #{modifytime}, #{creator}, #{modifier}, #{delflag}) 
+        (#{empno}, #{empname}, #{idnum}, #{gender}, #{birthday}, #{telephone}, #{photo}, #{departmentid},
+         #{empsts}, #{sortno}, #{createtime}, #{modifytime}, #{creator}, #{modifier}, #{delflag})
     </insert>
     
-    <update id="update" parameterType="com.tr.ibs.org.model.Employee">
+    <update id="update" parameterType="com.tr.mita.org.model.Employee">
         update org_employee
         <trim prefix="set" suffixOverrides=",">  
            <if test="empno != null">empno=#{empno},</if>
            <if test="empname != null">empname=#{empname},</if>
            <if test="idnum != null">idnum=#{idnum},</if>
            <if test="gender != null">gender=#{gender},</if>
-           <if test="education != null">education=#{education},</if>
            <if test="birthday != null">birthday=#{birthday},</if>
-           <if test="homephone != null">homephone=#{homephone},</if>
            <if test="telephone != null">telephone=#{telephone},</if>
-           <if test="email != null">email=#{email},</if>
-           <if test="entrydate != null">entrydate=#{entrydate},</if>
-           <if test="leavedate != null">leavedate=#{leavedate},</if>
-           <if test="retiredate != null">retiredate=#{retiredate},</if>
            <if test="photo != null">photo=#{photo},</if>
            <if test="departmentid != null">departmentid=#{departmentid},</if>
-           <if test="cardno != null">cardno=#{cardno},</if>
            <if test="empsts != null">empsts=#{empsts},</if>
-           <if test="custid != null">custid=#{custid},</if>
            <if test="sortno != null">sortno=#{sortno},</if>
            <if test="createtime != null">createtime=#{createtime},</if>
            <if test="modifytime != null">modifytime=#{modifytime},</if>
-           <if test="creator != null">creator=#{creator},</if>
-           <if test="modifier != null">modifier=#{modifier},</if>
            <if test="delflag != null">delflag=#{delflag},</if>
         </trim>
         where id = #{id}
