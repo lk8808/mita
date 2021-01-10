@@ -2,7 +2,7 @@ package com.tr.mita.portal.controller;
 
 import java.util.Map;
 
-import com.tr.mita.entity.RespData;
+import com.tr.mita.comm.entity.RespData;
 import com.tr.mita.portal.model.Role;
 import com.tr.mita.portal.service.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +18,17 @@ public class RoleController {
 	private IRoleService roleService;
 	
 	@RequestMapping(value="/queryList")
-	public RespData queryListWithPage(@RequestBody Map<String, Object> params) {
+	public Map<String, Object> queryListWithPage(@RequestBody Map<String, Object> params) {
 		return roleService.queryListWithPage(params);
 	}
 	
 	@RequestMapping(value="/save")
-	public RespData save(@RequestBody Role role) {
+	public Integer save(@RequestBody Role role) throws Exception {
 		return roleService.save(role);
 	}
 	
 	@RequestMapping(value="del")
-	public RespData del(String ids) {
+	public Integer del(String ids) {
 		return roleService.del(ids);
 	}
 

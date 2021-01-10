@@ -2,28 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tr.mita.portal.dao.RoleauthcfgDao">
 
-    <select id="queryRoleauthcfgsByRoleid" parameterType="int" resultType="map" >
-        SELECT c.*, dt.dictname cfgtypedesc,
-		       CASE WHEN c.cfgtype='DEP' THEN d.depname 
-		            WHEN c.cfgtype='POS' THEN p.posname 
-		            WHEN c.cfgtype='DEPPOS' THEN CONCAT(d.depname, '-', p.posname)
-		            ELSE '' END lnkname
-		FROM portal_roleauthcfg c
-		left join comm_dict dt on dt.dicttypeid='portal_roleauthtype' and dt.dictid=c.cfgtype
-		LEFT JOIN org_department d ON c.departmentid=d.id
-		LEFT JOIN org_position p ON c.positionid=p.id
+    <select id="queryByRoleid" parameterType="int" resultType="com.tr.mita.portal.model.Roleauthcfg" >
+        SELECT * FROM portal_roleauthcfg
 		where roleid=#{roleid}
     </select>
     
     <insert id="insertBatch" parameterType="java.util.List" >
-        insert into portal_roleauthcfg(cfgtype, authcfgid, departmentid, positionid, roleid)
+        insert into portal_roleauthcfg(roleauthtype, refid, departmentid, positionid, roleid)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.cfgtype}, #{item.authcfgid}, #{item.departmentid}, #{item.positionid}, #{item.roleid})
+            (#{item.roleauthtype}, #{item.refid}, #{item.departmentid}, #{item.positionid}, #{item.roleid})
         </foreach>
     </insert>
     
-    <delete id="delRoleauthcfgByRoleid" parameterType="Integer">
+    <delete id="delByRoleid" parameterType="Integer">
         delete from portal_roleauthcfg where roleid=#{roleid}
     </delete>
 

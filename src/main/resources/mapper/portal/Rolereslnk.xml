@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tr.mita.portal.dao.RolereslnkDao">
+
+    <select id="queryByRoleid" parameterType="int" resultType="com.tr.mita.portal.model.Rolereslnk" >
+        SELECT * FROM portal_rolereslnk
+        where roleid=#{roleid}
+    </select>
+
+    <insert id="insertBatch" parameterType="java.util.List" >
+        insert into portal_rolereslnk(roleid, resid, restype)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.roleid}, #{item.resid}, #{item.restype})
+        </foreach>
+    </insert>
+
+    <delete id="delByRoleid" parameterType="Integer">
+        delete from portal_rolereslnk where roleid=#{roleid}
+    </delete>
+
+</mapper>

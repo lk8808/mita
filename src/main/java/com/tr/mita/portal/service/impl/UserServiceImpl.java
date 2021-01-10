@@ -1,8 +1,9 @@
 package com.tr.mita.portal.service.impl;
 
-import com.tr.mita.entity.RespData;
-import com.tr.mita.entity.Rtsts;
-import com.tr.mita.entity.UserObject;
+import com.tr.mita.comm.entity.RespData;
+import com.tr.mita.comm.entity.Rtsts;
+import com.tr.mita.comm.entity.UserObject;
+import com.tr.mita.comm.exception.RespException;
 import com.tr.mita.org.dao.EmployeeDao;
 import com.tr.mita.org.model.Employee;
 import com.tr.mita.portal.dao.UserDao;
@@ -44,46 +45,40 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public RespData loginVerify(Map<String, Object> map) {
-		
-		RespData respData = new RespData();
+	public Map<String, Object> loginVerify(Map<String, Object> map) throws Exception {
+		Map<String, Object> retMap = new HashMap<>();
 		
 		String username = (String)map.get("username");
 		String passwd = (String)map.get("passwd");
 		
 		User user = userDao.getUserByUsername(username);
 		if (user == null) {
-			respData.setRtsts(new Rtsts("100001", "用户名不存在"));
-			return respData;
+			throw new RespException("100001", "用户名不存在");
 		}
 		if ( !passwd.equals(user.getPasswd())) {
-			respData.setRtsts(new Rtsts("100002", "密码错误"));
-			return respData;
+			throw new RespException("100001", "密码错误");
 		}
-		respData.setRtsts(new Rtsts("000000", "登陆成功！"));
 		//保存session信息
 		UserObject userObject = new UserObject();
 		user.setPasswd("");
 		userObject.setUser(user);
 		Employee employee = employeeDao.get(user.getEmployeeid());
 		userObject.setEmployee(employee);
-		String token = UUID.randomUUID().toString().replaceAll("-", "");
+		String token = "token_" + UUID.randomUUID().toString().replaceAll("-", "");
 		redisUtil.set(token, userObject, 2l, TimeUnit.HOURS);
-		respData.setRtdata("token", token);
-		respData.setRtdata("empname", employee.getEmpname());
-		respData.setRtdata("theme", user.getDesktopstyle());
+		retMap.put("token", token);
+		retMap.put("empname", employee.getEmpname());
+		retMap.put("theme", user.getDesktopstyle());
 
-		return respData;
+		return retMap;
 	}
 
 	@Override
-	public RespData logout() {
-		RespData respData = new RespData();
+	public void logout() {
 		String token = request.getHeader("Token");
 		if (token != null) {
 			redisUtil.remove(token);
 		}
-		return respData;
 	}
 
 	@Override
@@ -92,20 +87,18 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public RespData getCurrentUser() {
-		RespData respData = new RespData();
+	public UserObject getCurrentUser() {
 		String token = request.getHeader("Token");
 		if (token != null) {
 			UserObject userObject = (UserObject)redisUtil.get(token);
-			respData.setRtdata("userObject", userObject);
-			return respData;
+			return userObject;
 		}
-		return respData;
+		return null;
 	}
 
 	@Override
-	public RespData queryAllUsersByDepid(Map<String, Object> params) {
-		RespData respData = new RespData(new Rtsts("000000", "查询成功！"));
+	public Map<String, Object> queryAllUsersByDepid(Map<String, Object> params) {
+		Map<String, Object> retMap = new HashMap<String, Object>();
 		//设置分页
 		int page = (int)params.get("page");
 		int rows = (int)params.get("rows");
@@ -113,34 +106,74 @@ public class UserServiceImpl implements IUserService {
 		int depid = params.get("depid") == null ? 0 : (int)params.get("depid");
 		if (depid > 0) {
 			params.put("depid", depid);
-			respData.setRtdata("rows", userDao.queryAllUsersByDepidWithPage(params));
-			respData.setRtdata("total", userDao.countAllUsersByDepid(params));
+			retMap.put("rows", userDao.queryAllUsersByDepidWithPage(params));
+			retMap.put("total", userDao.countAllUsersByDepid(params));
 		} else {
-			respData.setRtdata("rows", userDao.queryListWithPage(params));
-			respData.setRtdata("total", userDao.count(params));
+			retMap.put("rows", userDao.queryListWithPage(params));
+			retMap.put("total", userDao.count(params));
 		}
-		return respData;
+		return retMap;
 	}
 
 	@Override
-	public RespData save(User user) {
-		RespData respData = new RespData(new Rtsts("000000", "保存成功！"));
+	public Integer save(User user) throws Exception {
 		String token = request.getHeader("Token");
+		UserObject userObject = (UserObject)redisUtil.get(token);
+		User tmp = new User();
+		tmp.setId(user.getId());
+		tmp.setUsername(user.getUsername());
+		if (!isUnique(tmp)) {
+			throw new RespException("200001", "用户名不唯一！");
+		}
+		user.setModifier(userObject.getUser().getUsername());
+		user.setModifytime(new Date());
+		return userDao.update(user);
+	}
 
-		try {
-			UserObject userObject = (UserObject)redisUtil.get(token);
+	@Override
+	public Integer resetPasswd(String ids) {
+		String token = request.getHeader("Token");
+		UserObject userObject = (UserObject)redisUtil.get(token);
+		String[] idArr = ids.split(",");
+		for (String id : idArr) {
+			User user = new User();
+			user.setId(Integer.valueOf(id));
+			user.setPasswd(MD5Util.md5Encode("000000"));
 			user.setModifier(userObject.getUser().getUsername());
 			user.setModifytime(new Date());
 			userDao.update(user);
-		} catch (Exception e) {
-			respData.setRtsts(new Rtsts("200001", "保存失败！"));
-			logger.error(e.getMessage());
 		}
-		return respData;
+		return idArr.length;
 	}
+	
+	@Override
+	public Integer modifyPwd(String oldpasswd, String newpasswd) throws Exception{
+		String token = request.getHeader("Token");
+		UserObject userObject = (UserObject)redisUtil.get(token);
+		User user = this.userDao.get(userObject.getUser().getId());
+		if (!user.getPasswd().equals(oldpasswd)) {
+			throw new RespException("200001", "原始密码错误！");
+		}
+		user.setId(userObject.getUser().getId());
+		user.setPasswd(newpasswd);
+		user.setModifier(userObject.getUser().getUsername());
+		user.setModifytime(new Date());
+		return userDao.update(user);
+	};
 
 	@Override
-	public boolean isUnique(User user) {
+	public Integer modifyTheme(String theme) {
+		String token = request.getHeader("Token");
+		UserObject userObject = (UserObject)redisUtil.get(token);
+		User user = this.userDao.get(userObject.getUser().getId());
+		user.setId(userObject.getUser().getId());
+		user.setDesktopstyle(theme);
+		user.setModifier(userObject.getUser().getUsername());
+		user.setModifytime(new Date());
+		return userDao.update(user);
+	}
+
+	private boolean isUnique(User user) {
 		int tmpId = user.getId();
 		user.setId(null);
 		User tmp = userDao.expand(user);
@@ -148,69 +181,5 @@ public class UserServiceImpl implements IUserService {
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	public RespData resetPasswd(String ids) {
-		RespData respData = new RespData(new Rtsts("000000", "保存成功！"));
-		String token = request.getHeader("Token");
-		try {
-			UserObject userObject = (UserObject)redisUtil.get(token);
-			String[] idArr = ids.split(",");
-			for (String id : idArr) {
-				User user = new User();
-				user.setId(Integer.valueOf(id));
-				user.setPasswd(MD5Util.md5Encode("000000"));
-				user.setModifier(userObject.getUser().getUsername());
-				user.setModifytime(new Date());
-				userDao.update(user);
-			}
-		} catch (Exception e) {
-			respData.setRtsts(new Rtsts("200001", "保存失败！"));
-			logger.error(e.getMessage());
-		}
-		return respData;
-	}
-	
-	@Override
-	public RespData modifyPwd(String oldpasswd, String newpasswd){
-		RespData respData = new RespData(new Rtsts("000000", "保存成功！"));
-		String token = request.getHeader("Token");
-		try {
-			UserObject userObject = (UserObject)redisUtil.get(token);
-			User user = this.userDao.get(userObject.getUser().getId());
-			if (!user.getPasswd().equals(oldpasswd)) {
-				respData.setRtsts(new Rtsts("200001", "原始密码错误！"));
-				return respData;
-			}
-			user.setId(userObject.getUser().getId());
-			user.setPasswd(newpasswd);
-			user.setModifier(userObject.getUser().getUsername());
-			user.setModifytime(new Date());
-			userDao.update(user);
-		} catch (Exception e) {
-			respData.setRtsts(new Rtsts("200001", "保存失败！"));
-			logger.error(e.getMessage());
-		}
-		return respData;
-	};
-
-	@Override
-	public RespData modifyTheme(String theme) {
-		RespData respData = new RespData();
-		String token = request.getHeader("Token");
-		try {
-			UserObject userObject = (UserObject)redisUtil.get(token);
-			User user = this.userDao.get(userObject.getUser().getId());
-			user.setId(userObject.getUser().getId());
-			user.setDesktopstyle(theme);
-			user.setModifier(userObject.getUser().getUsername());
-			user.setModifytime(new Date());
-			userDao.update(user);
-		} catch (Exception e) {
-			respData.setRtsts(new Rtsts("200001", "修改失败！"));
-			logger.error(e.getMessage());
-		}
-		return respData;
 	}
 }

@@ -3,7 +3,6 @@ package com.tr.mita.comm.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.tr.mita.base.IBaseDao;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.tr.mita.comm.model.Dict;

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tr.mita.fims.dao.ShopDao">
+
+    <select id="expand" parameterType="com.tr.mita.fims.model.Shop" resultType="com.tr.mita.fims.model.Shop">
+        select * from fims_shop where delflag='0'
+        <if test="id != null and id > 0">and id=#{id}</if>
+        <if test="shname != null">and shname=#{shname}</if>
+        limit 1
+    </select>
+
+    <select id="queryListWithPage" parameterType="map" resultType="com.tr.mita.fims.model.Shop">
+        select s.*, d1.dictname busstypedesc, d2.dictname shopstsdesc, d.depname, e.empname
+        from fims_shop s
+        left join comm_dict d1 on s.busstype=d1.dictid and d1.dicttypeid='fims_busstype'
+        left join comm_dict d2 on s.shopsts=d2.dictid and d2.dicttypeid='fims_shopsts'
+        left join org_department d on s.departmentid = d.id
+        left join org_employee e on s.employeeid = e.id
+        where s.delflag='0'
+        limit #{begin}, #{limit}
+    </select>
+    <select id="count" parameterType="map" resultType="Integer">
+        select count(1) from fims_shop where delflag='0'
+    </select>
+
+    <insert id="insert" parameterType="com.tr.mita.fims.model.Shop" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into fims_shop
+        (shopno, shname, shortname, buslicence, ownername, telephone, owneridnum, accountname, account, busstype,
+         province, city, country, address, longitude, latitude, qrcode, shopsts, departmentid, employeeid, remark,
+         createtime, modifytime, creator, modifier, delflag)
+        values
+        (#{shopno}, #{shname}, #{shortname}, #{buslicence}, #{ownername}, #{telephone}, #{owneridnum}, #{accountname}, #{account}, #{busstype},
+        #{province}, #{city}, #{country},#{address}, #{longitude}, #{latitude}, #{qrcode}, #{shopsts}, #{departmentid}, #{employeeid}, #{remark},
+        #{createtime}, #{modifytime}, #{creator}, #{modifier}, #{delflag})
+    </insert>
+
+    <update id="update" parameterType="com.tr.mita.fims.model.Shop">
+        update fims_shop
+        <trim prefix="set" suffixOverrides=",">
+            <if test="shname != null">shname=#{shname},</if>
+            <if test="shortname != null">shortname=#{shortname},</if>
+            <if test="buslicence != null">buslicence=#{buslicence},</if>
+            <if test="ownername != null">ownername=#{ownername},</if>
+            <if test="telephone != null">telephone=#{telephone},</if>
+            <if test="owneridnum != null">owneridnum=#{owneridnum},</if>
+            <if test="accountname != null">accountname=#{accountname},</if>
+            <if test="account != null">account=#{account},</if>
+            <if test="busstype != null">busstype=#{busstype},</if>
+            <if test="province != null">province=#{province},</if>
+            <if test="city != null">city=#{city},</if>
+            <if test="country != null">country=#{country},</if>
+            <if test="address != null">address=#{address},</if>
+            <if test="longitude != null">longitude=#{longitude},</if>
+            <if test="latitude != null">latitude=#{latitude},</if>
+            <if test="qrcode != null">qrcode=#{qrcode},</if>
+            <if test="shopsts != null">shopsts=#{shopsts},</if>
+            <if test="departmentid != null">departmentid=#{departmentid},</if>
+            <if test="employeeid != null">employeeid=#{employeeid},</if>
+            <if test="remark != null">remark=#{remark},</if>
+            <if test="modifytime != null">modifytime=#{modifytime},</if>
+            <if test="modifier != null">modifier=#{modifier},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deleteBatch">
+        update fims_shop set delflag='1'
+        where id in
+        <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+</mapper>

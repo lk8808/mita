@@ -1,8 +1,8 @@
 package com.tr.mita.portal.service.impl;
 
-import com.tr.mita.entity.RespData;
-import com.tr.mita.entity.Rtsts;
-import com.tr.mita.entity.UserObject;
+import com.tr.mita.comm.entity.RespData;
+import com.tr.mita.comm.entity.Rtsts;
+import com.tr.mita.comm.entity.UserObject;
 import com.tr.mita.portal.dao.ApplicationDao;
 import com.tr.mita.portal.model.Application;
 import com.tr.mita.portal.service.IApplicationService;
@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -33,71 +35,55 @@ public class ApplicationServiceImpl implements IApplicationService {
 	private ApplicationDao applicationDao;
 	
 	@Override
-	public RespData queryAllList() {
-		RespData respData = new RespData();
-		respData.setRtdata("bizdatas", applicationDao.queryAllList());
-		return respData;
+	public List<Application> queryAllList() {
+		return applicationDao.queryAllList();
 	}
 	
 	@Override
-	public RespData queryAllAuthList() {
-		RespData respData = new RespData();
+	public Map<String, Object> queryAllAuthList() {
+		Map<String, Object> retMap = new HashMap<String, Object>();
 		String token = request.getHeader("Token");
 		if (token != null) {
 			UserObject userObject = (UserObject)redisUtil.get(token);
-			respData.setRtdata("bizdatas", applicationDao.queryAllAuthList(userObject.getUser().getId().toString()));
-			return respData;
+			retMap.put("bizdatas", applicationDao.queryAllAuthList(userObject.getUser().getId().toString()));
+			return retMap;
 		}
-		return respData;
+		return null;
 	}
 	
 	@Override
-	public RespData queryListWithPage(Map<String, Object> map) {
-		RespData respData = new RespData();
-		respData.setRtdata("bizdatas", applicationDao.queryListWithPage(map));
-		respData.setRtdata("total", applicationDao.count(map));
-		return respData;
+	public Map<String, Object> queryListWithPage(Map<String, Object> map) {
+		Map<String, Object> retMap = new HashMap<String, Object>();
+		retMap.put("bizdatas", applicationDao.queryListWithPage(map));
+		retMap.put("total", applicationDao.count(map));
+		return retMap;
 	}
 
 	@Override
 	@Transactional
-	public RespData save(Application application) {
-		RespData respData = new RespData(new Rtsts("000000", "保存成功！"));
+	public Integer save(Application application) throws Exception {
 		String token = request.getHeader("Token");
-		try {
-			UserObject userObject = (UserObject)redisUtil.get(token);
-			if (application.getId() != null && application.getId() > 0) {
-				application.setModifytime(new Date());
-				application.setModifier(userObject.getEmployee().getEmpname());
-				applicationDao.update(application);
-			} else {
-				application.setDelflag("0");
-				application.setCreatetime(new Date());
-				application.setCreator(userObject.getEmployee().getEmpname());
-				applicationDao.insert(application);
-			}
-		} catch (Exception e) {
-			respData.setRtsts(new Rtsts("200001", "保存失败！"));
-			logger.error(e.getMessage());
-		}	
-		return respData;
+		UserObject userObject = (UserObject)redisUtil.get(token);
+		if (application.getId() != null && application.getId() > 0) {
+			application.setModifytime(new Date());
+			application.setModifier(userObject.getEmployee().getEmpname());
+			return applicationDao.update(application);
+		} else {
+			application.setDelflag("0");
+			application.setCreatetime(new Date());
+			application.setCreator(userObject.getEmployee().getEmpname());
+			return applicationDao.insert(application);
+		}
 	}
 
 	@Override
 	@Transactional
-	public RespData del(String ids) {
-		RespData respData = new RespData(new Rtsts("000000", "删除成功！"));
-		try {
-			if (ids != null) {
-				String[] idArr = ids.split(",");
-				applicationDao.deleteBatch(idArr);
-			}
-		} catch (Exception e) {
-			respData.setRtsts(new Rtsts("200002", "删除失败！"));
-			logger.error(e.getMessage());
-		}	
-		
-		return respData;
+	public Integer del(String ids) {
+		if (ids != null) {
+			String[] idArr = ids.split(",");
+			return applicationDao.deleteBatch(idArr);
+		}
+		return 0;
 	}
 	
 }

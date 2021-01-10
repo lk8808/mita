@@ -15,6 +15,14 @@
         <if test="empname != null">and empname=#{empname}</if>
         limit 1 
     </select>
+
+    <select id="queryAllList" parameterType="map" resultType="com.tr.mita.org.model.Employee">
+        select e.*, d.depname
+        from org_employee e
+        left join org_department d on e.departmentid=d.id
+        where e.delflag='0'
+        order by e.departmentid, e.sortno
+    </select>
     
     <select id="queryListWithPage" parameterType="map" resultType="com.tr.mita.org.model.Employee">
         select e.*, d.depname

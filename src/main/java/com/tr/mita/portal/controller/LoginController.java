@@ -1,7 +1,6 @@
 package com.tr.mita.portal.controller;
 
-import com.tr.mita.entity.RespData;
-import com.tr.mita.entity.Rtsts;
+import com.tr.mita.comm.entity.RespData;
 import com.tr.mita.portal.service.IUserService;
 import com.tr.mita.utils.RedisUtil;
 import org.slf4j.Logger;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 
@@ -29,13 +27,13 @@ public class LoginController {
 	private IUserService userService;
 	
 	@PostMapping(value="/login",consumes="application/json",produces="application/json")
-	public RespData login(@RequestBody Map<String, Object> map) {
+	public Map<String, Object> login(@RequestBody Map<String, Object> map) throws Exception{
 		return userService.loginVerify(map);
 	}
 	
 	@PostMapping(value="/logout")
-	public RespData logout() {
-		return userService.logout();
+	public void logout() {
+		userService.logout();
 	}
 
 }

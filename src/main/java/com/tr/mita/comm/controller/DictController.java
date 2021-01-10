@@ -2,13 +2,13 @@ package com.tr.mita.comm.controller;
 
 import com.tr.mita.comm.model.Dict;
 import com.tr.mita.comm.service.IDictService;
-import com.tr.mita.entity.RespData;
+import com.tr.mita.comm.entity.RespData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,12 +24,12 @@ public class DictController {
 	}
 
 	@RequestMapping("/queryDictsByDicttypeid")
-	public RespData queryDictsByDicttypeid(String dicttypeid) {
+	public List<Dict> queryDictsByDicttypeid(String dicttypeid) {
 		return dictService.queryDictsByDicttypeid(dicttypeid);
 	}
 	
 	@RequestMapping("/queryDicttypesWithPage")
-	public RespData queryDicttypesWithPage(@RequestBody Map<String, Object> params) {
+	public Map<String, Object> queryDicttypesWithPage(@RequestBody Map<String, Object> params) {
 		return dictService.queryDicttypesWithPage(params);
 	}
 }

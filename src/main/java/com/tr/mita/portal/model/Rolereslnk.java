@@ -5,7 +5,7 @@ public class Rolereslnk {
 
     private Long roleid;
 
-    private Long resourceid;
+    private Long resid;
 
     private String restype;
 
@@ -25,12 +25,12 @@ public class Rolereslnk {
         this.roleid = roleid;
     }
 
-    public Long getResourceid() {
-        return resourceid;
+    public Long getResid() {
+        return resid;
     }
 
-    public void setResourceid(Long resourceid) {
-        this.resourceid = resourceid;
+    public void setResid(Long resid) {
+        this.resid = resid;
     }
 
     public String getRestype() {

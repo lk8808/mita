@@ -1,5 +1,6 @@
 package com.tr.mita.org.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import com.tr.mita.org.model.Position;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tr.mita.entity.RespData;
+import com.tr.mita.comm.entity.RespData;
 
 @RestController
 @RequestMapping("/position")
@@ -17,29 +18,24 @@ public class PositionController {
 
 	@Autowired
 	private IPositionService positionService;
-	
-	@RequestMapping("/get")
-	public Position get(Integer id) {
-		return positionService.get(id);
-	}
-	
+
 	@RequestMapping("/queryList")
-	public RespData queryList(@RequestBody Map<String, Object> params) {
+	public Map<String, Object> queryList(@RequestBody Map<String, Object> params) {
 		return positionService.queryListWithPage(params);
 	}
 
 	@RequestMapping("/queryAllList")
-	public RespData queryAllList() {
+	public List<Position> queryAllList() {
 		return positionService.queryAllList();
 	}
 	
 	@RequestMapping(value="/save")
-	public RespData save(@RequestBody Position position) {
+	public Integer save(@RequestBody Position position) throws Exception {
 		return positionService.save(position);
 	}
 	
 	@RequestMapping(value="/del")
-	public RespData del(String ids) {
+	public Integer del(String ids) {
 		return positionService.del(ids);
 	}
 }

@@ -9,6 +9,15 @@
         LEFT JOIN org_position p ON lnk.positionid=p.id
         where d.delflag = 0 AND p.delflag=0 and lnk.departmentid=#{depid}
     </select>
+
+    <select id="queryAllList_ext" resultType="map">
+        SELECT lnk.*, d.depname depname, p.posname posname
+        FROM org_depposlnk lnk
+        LEFT JOIN org_department d ON lnk.departmentid=d.id
+        LEFT JOIN org_position p ON lnk.positionid=p.id
+        where d.delflag = 0 AND p.delflag=0
+        order by lnk.departmentid
+    </select>
     
     <insert id="insertByDepidPosids" parameterType="map">
         insert into org_depposlnk(departmentid, positionid, createtime, creator)

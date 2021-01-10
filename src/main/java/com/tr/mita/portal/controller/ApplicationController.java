@@ -3,7 +3,7 @@ package com.tr.mita.portal.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.tr.mita.entity.RespData;
+import com.tr.mita.comm.entity.RespData;
 import com.tr.mita.portal.model.Application;
 import com.tr.mita.portal.service.IApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,27 +19,27 @@ public class ApplicationController {
 	private IApplicationService applicationService;
 	
 	@RequestMapping(value="/queryAllList")
-	public RespData queryAllList() {
+	public List<Application> queryAllList() {
 		return applicationService.queryAllList();
 	}
 	
 	@RequestMapping(value="/queryAllAuthList")
-	public RespData queryAllAuthList() {
+	public Map<String, Object> queryAllAuthList() {
 		return applicationService.queryAllAuthList();
 	}
 	
 	@RequestMapping(value="/queryList")
-	public RespData queryList(@RequestBody Map<String, Object> map) {
+	public Map<String, Object> queryList(@RequestBody Map<String, Object> map) {
 		return applicationService.queryListWithPage(map);
 	}
 	
 	@RequestMapping(value="/save")
-	public RespData save(@RequestBody Application application) {
+	public Integer save(@RequestBody Application application) throws Exception {
 		return applicationService.save(application);
 	}
 	
 	@RequestMapping(value="/del")
-	public RespData del(String ids) {
+	public Integer del(String ids) {
 		return applicationService.del(ids);
 	}
 }

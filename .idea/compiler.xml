@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="mita" target="1.7" />
+      <module name="mita" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

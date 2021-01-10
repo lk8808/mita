@@ -2,12 +2,11 @@ package com.tr.mita.portal.controller;
 
 import java.util.Map;
 
-import com.tr.mita.entity.RespData;
+import com.tr.mita.comm.entity.RespData;
+import com.tr.mita.comm.entity.UserObject;
 import com.tr.mita.portal.model.User;
 import com.tr.mita.portal.service.IUserService;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,37 +20,32 @@ public class UserController {
 	
 	
 	@RequestMapping("/getCurrentUser")
-	public RespData getCurrentUser() {
+	public UserObject getCurrentUser() {
 		return userService.getCurrentUser();
 	}
 	
 	@RequestMapping("/queryAllUsersByDepid")
-	public RespData queryAllUsersByDepid(@RequestBody Map<String, Object> params) {
+	public Map<String, Object> queryAllUsersByDepid(@RequestBody Map<String, Object> params) {
 		return userService.queryAllUsersByDepid(params);
 	}
 	
 	@RequestMapping(value="/save")
-	public RespData save(User user) {
+	public Integer save(User user) throws Exception {
 		return userService.save(user);
 	}
-	
-	@RequestMapping(value="/unique")
-	public boolean isUnique(User user) {
-		return userService.isUnique(user);
-	}
-	
+
 	@RequestMapping(value="/resetPasswd")
-	public RespData resetPasswd(String ids) {
+	public Integer resetPasswd(String ids) {
 		return userService.resetPasswd(ids);
 	}
 	
 	@RequestMapping(value="/modifyPwd")
-	public RespData modifyPwd(String op, String np) {
+	public Integer modifyPwd(String op, String np) throws Exception {
 		return userService.modifyPwd(op, np);
 	}
 
 	@RequestMapping(value="/modifyTheme")
-	public RespData modifyTheme(String theme) {
+	public Integer modifyTheme(String theme) {
 		return userService.modifyTheme(theme);
 	}
 	

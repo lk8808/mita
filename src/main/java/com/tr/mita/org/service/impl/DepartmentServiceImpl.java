@@ -9,25 +9,22 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.tr.mita.comm.exception.RespException;
 import com.tr.mita.org.dao.DepartmentDao;
 import com.tr.mita.org.dao.DepposlnkDao;
 import com.tr.mita.org.model.Department;
-import com.tr.mita.org.model.Employee;
 import com.tr.mita.org.service.IDepartmentService;
 import com.tr.mita.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.tr.mita.entity.RespData;
-import com.tr.mita.entity.Rtsts;
-import com.tr.mita.entity.UserObject;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.tr.mita.comm.entity.RespData;
+import com.tr.mita.comm.entity.Rtsts;
+import com.tr.mita.comm.entity.UserObject;
 
 @Service
-@Transactional
 public class DepartmentServiceImpl implements IDepartmentService {
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
@@ -48,11 +45,8 @@ public class DepartmentServiceImpl implements IDepartmentService {
 	private HttpSession session;
 
 	@Override
-	public RespData getDepartmentTree() {
-		RespData respData = new RespData();
-		List<Map<String, Object>> nodes = getDepartmentTreeByParentid(0);
-		respData.setRtdata("bizdatas", nodes);
-		return respData;
+	public List<Map<String, Object>> getDepTree() {
+		return getDepartmentTreeByParentid(0);
 	}
 
 	private List<Department> queryDepartmentsLevel1() {
@@ -83,8 +77,8 @@ public class DepartmentServiceImpl implements IDepartmentService {
 	}
 
 	@Override
-	public RespData queryAllDepsByParentid(Map<String, Object> params) {
-		RespData respData = new RespData(new Rtsts("000000", "查询成功！"));
+	public Map<String, Object> queryAllDepsByParentid(Map<String, Object> params) {
+		Map<String, Object> retMap = new HashMap<String, Object>();
 		//设置分页
 		int page = (int)params.get("page");
 		int rows = (int)params.get("rows");
@@ -99,86 +93,72 @@ public class DepartmentServiceImpl implements IDepartmentService {
 		int parentid = params.get("parentid") == null ? 0 : (int)params.get("parentid");
 		if (parentid > 0) {
 			params.put("parentid", parentid);
-			respData.setRtdata("rows", departmentDao.queryAllDepsByParentidWithPage(params));
-			respData.setRtdata("total", departmentDao.countAllDepsByParentid(params));
+			retMap.put("rows", departmentDao.queryAllDepsByParentidWithPage(params));
+			retMap.put("total", departmentDao.countAllDepsByParentid(params));
 		} else {
-			respData.setRtdata("rows", departmentDao.queryListWithPage(params));
-			respData.setRtdata("total", departmentDao.count(params));
+			retMap.put("rows", departmentDao.queryListWithPage(params));
+			retMap.put("total", departmentDao.count(params));
 		}
-		return respData;
+		return retMap;
 	}
 
 	@Override
-	public RespData save(Department department) {
-		RespData respData = new RespData();
+	public Integer save(Department department) throws Exception{
 		String token = request.getHeader("Token");
-		try {
-			Department tmp = new Department();
-			tmp.setId(department.getId());
-			tmp.setDepno(department.getDepno());
-			if (!isUnique(tmp)) {
-				respData.setRtsts(new Rtsts("200001", "部门编号不唯一！"));
-				return respData;
-			}
-			UserObject userObject = (UserObject)redisUtil.get(token);
-			if (department.getId() != null && department.getId() > 0) {
-				department.setModifier(userObject.getUser().getUsername());
-				department.setModifytime(new Date());
-				departmentDao.update(department);
-			} else {
-				department.setDelflag("0");
-				department.setCreator(userObject.getUser().getUsername());
-				department.setCreatetime(new Date());
-				departmentDao.insert(department);
-			}
-			//更新部门等级和部门路径
-			if (department.getParentid() != null && department.getParentid() > 0) {
-				Department parent = departmentDao.get(department.getParentid());
-				if (parent != null) {
-					int level = parent.getDeplevel();
-					String deppath = parent.getDeppath();
-					deppath = deppath + department.getId() + ".";
-					department.setDeplevel(level + 1);
-					department.setDeppath(deppath);
-				}
-			} else {
-				String deppath = "." + department.getId() + ".";
-				department.setDeplevel(1);
+		Department tmp = new Department();
+		tmp.setId(department.getId());
+		tmp.setDepno(department.getDepno());
+		if (!isUnique(tmp)) {
+			throw new RespException("200001", "部门编号不唯一！");
+		}
+		UserObject userObject = (UserObject)redisUtil.get(token);
+		if (department.getId() != null && department.getId() > 0) {
+			department.setModifier(userObject.getUser().getUsername());
+			department.setModifytime(new Date());
+			departmentDao.update(department);
+		} else {
+			department.setDelflag("0");
+			department.setCreator(userObject.getUser().getUsername());
+			department.setCreatetime(new Date());
+			departmentDao.insert(department);
+		}
+		//更新部门等级和部门路径
+		if (department.getParentid() != null && department.getParentid() > 0) {
+			Department parent = departmentDao.get(department.getParentid());
+			if (parent != null) {
+				int level = parent.getDeplevel();
+				String deppath = parent.getDeppath();
+				deppath = deppath + department.getId() + ".";
+				department.setDeplevel(level + 1);
 				department.setDeppath(deppath);
 			}
-			departmentDao.update(department);
-			//删除旧的部门岗位
-			depposlnkDao.deleteByDepid(department.getId());
-			//添加部门岗位
-			if (department.getPosids() != null && department.getPosids().size()>0) {
-				Map<String, Object> params = new HashMap<String, Object>();
-				List posidArr = department.getPosids();
-				params.put("posids", posidArr);
-				params.put("depid", department.getId());
-				params.put("creator", userObject.getUser().getUsername());
-				depposlnkDao.insertByDepidPosids(params);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			respData.setRtsts(new Rtsts("200001", "保存失败！"));
-			logger.error(e.getMessage());
-		}	
-		return respData;
+		} else {
+			String deppath = "." + department.getId() + ".";
+			department.setDeplevel(1);
+			department.setDeppath(deppath);
+		}
+		departmentDao.update(department);
+		//删除旧的部门岗位
+		depposlnkDao.deleteByDepid(department.getId());
+		//添加部门岗位
+		if (department.getPosids() != null && department.getPosids().size()>0) {
+			Map<String, Object> params = new HashMap<String, Object>();
+			List posidArr = department.getPosids();
+			params.put("posids", posidArr);
+			params.put("depid", department.getId());
+			params.put("creator", userObject.getUser().getUsername());
+		}
+		return 0;
 	}
 
 	@Override
-	public RespData del(String ids) {
+	public Integer del(String ids) {
 		RespData respData = new RespData(new Rtsts("000000", "删除成功！"));
-		try {
-			if (ids != null) {
-				String[] idArr = ids.split(",");
-				departmentDao.deleteBatch(idArr);
-			}
-		} catch (Exception e) {
-			respData.setRtsts(new Rtsts("200002", "删除失败！"));
-			logger.error(e.getMessage());
-		}	
-		return respData;
+		if (ids != null) {
+			String[] idArr = ids.split(",");
+			return departmentDao.deleteBatch(idArr);
+		}
+		return 0;
 	}
 
 	private boolean isUnique(Department department) {

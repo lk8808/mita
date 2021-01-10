@@ -1,9 +1,10 @@
 package com.tr.mita.portal.model;
 
 public class Roleauthcfg {
-    private String cfgtype;
 
-    private Integer authcfgid;
+    private String roleauthtype;
+
+    private Integer refid;
 
     private Integer departmentid;
 
@@ -11,20 +12,20 @@ public class Roleauthcfg {
 
     private Integer roleid;
 
-    public String getCfgtype() {
-        return cfgtype;
+    public String getRoleauthtype() {
+        return roleauthtype;
     }
 
-    public void setCfgtype(String cfgtype) {
-        this.cfgtype = cfgtype == null ? null : cfgtype.trim();
+    public void setRoleauthtype(String roleauthtype) {
+        this.roleauthtype = roleauthtype;
     }
 
-    public Integer getAuthcfgid() {
-        return authcfgid;
+    public Integer getRefid() {
+        return refid;
     }
 
-    public void setAuthcfgid(Integer authcfgid) {
-        this.authcfgid = authcfgid;
+    public void setRefid(Integer refid) {
+        this.refid = refid;
     }
 
     public Integer getDepartmentid() {
@@ -51,10 +52,14 @@ public class Roleauthcfg {
         this.roleid = roleid;
     }
 
-	@Override
-	public String toString() {
-		return "Roleauthcfg [cfgtype=" + cfgtype + ", authcfgid=" + authcfgid + ", departmentid=" + departmentid
-				+ ", positionid=" + positionid + ", roleid=" + roleid + "]";
-	}
-     
+    @Override
+    public String toString() {
+        return "Roleauthcfg{" +
+                "roleauthtype='" + roleauthtype + '\'' +
+                ", refid=" + refid +
+                ", departmentid=" + departmentid +
+                ", positionid=" + positionid +
+                ", roleid=" + roleid +
+                '}';
+    }
 }

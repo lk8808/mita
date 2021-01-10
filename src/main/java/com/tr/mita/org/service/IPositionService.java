@@ -1,21 +1,20 @@
 package com.tr.mita.org.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.tr.mita.org.model.Position;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.tr.mita.entity.RespData;
+import com.tr.mita.comm.entity.RespData;
 
 public interface IPositionService {
-	
-	public Position get(Integer id);
 
-	public RespData queryListWithPage(@RequestBody Map<String, Object> params);
+	public Map<String, Object> queryListWithPage(@RequestBody Map<String, Object> params);
 
-	public RespData queryAllList();
+	public List<Position> queryAllList();
 	
-	public RespData save(Position position);
+	public Integer save(Position position) throws Exception;
 	
-	public RespData del(String ids);
+	public Integer del(String ids);
 }

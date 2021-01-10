@@ -3,7 +3,8 @@ package com.tr.mita.portal.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.tr.mita.entity.RespData;
+import com.tr.mita.comm.entity.RespData;
+import com.tr.mita.portal.model.Roleauthcfg;
 import com.tr.mita.portal.service.IRoleauthcfgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,14 +18,13 @@ public class RoleauthcfgController {
 	@Autowired
 	private IRoleauthcfgService roleauthcfgService;
 	
-	@RequestMapping("/queryRoleauthcfgsByRoleid")
-	public List<Map<String, Object>> queryRoleauthcfgsByRoleid(Integer roleid) {
-		return roleauthcfgService.queryRoleauthcfgsByRoleid(roleid);
-	}
-	
-	@RequestMapping("/saveRoleauthcfgByRole")
-	public RespData saveRoleauthcfgByRole(@RequestBody Map<String, Object> params) {
-		return roleauthcfgService.saveRoleauthcfgByRole(params);
+	@RequestMapping("/queryByRoleid")
+	public List<Roleauthcfg> queryByRoleid(Integer roleid) {
+		return roleauthcfgService.queryByRoleid(roleid);
 	}
 
+	@RequestMapping("/saveBath")
+	public Integer saveBath(@RequestBody Map<String, Object> params) {
+		return roleauthcfgService.saveBath(params);
+	}
 }

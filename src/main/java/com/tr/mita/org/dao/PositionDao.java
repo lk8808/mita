@@ -2,7 +2,7 @@ package com.tr.mita.org.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.tr.mita.base.IBaseDao;
+import com.tr.mita.comm.dao.IBaseDao;
 import com.tr.mita.org.model.Position;
 
 @Mapper

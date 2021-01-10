@@ -3,7 +3,7 @@ package com.tr.mita.portal.service;
 import java.util.List;
 import java.util.Map;
 
-import com.tr.mita.entity.RespData;
+import com.tr.mita.comm.entity.RespData;
 import com.tr.mita.portal.model.Menu;
 
 public interface IMenuService {
@@ -12,17 +12,18 @@ public interface IMenuService {
 	
 	public List<Menu> queryAllList();
 
-	public RespData queryMenusByAppid(String appid);
+	public List<Menu> queryMenusByAppid(String appid);
 
-	public RespData queryMenusByParentid(String parentid);
+	public List<Menu> queryMenusByParentid(String parentid);
 
-	public RespData getMenuTreeByAppid(String appid);
+	public List<Map<String, Object>> getMenuTreeByAppid(String appid);
+
+	public List<Map<String, Object>> getAuthAppMenuTree();
 	
-	public RespData getAppMenuTree();
+	public List<Map<String, Object>>  getAppMenuTree();
 	
-	public RespData save(Menu menu);
+	public Integer save(Menu menu) throws Exception;
 	
-	public RespData del(String ids);
-	
-	public List<Menu> queryAuthHomeMenus();
+	public Integer del(String ids);
+
 }

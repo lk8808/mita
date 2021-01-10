@@ -16,15 +16,32 @@
         order by sortno
     </select>
     
-    <!-- 查询所有的一级菜单 -->
-    <select id="queryMenusLevel1" resultType="com.tr.mita.portal.model.Menu">
-        select id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
-        from portal_menu where delflag='0' and menulevel=1
-    </select>
-    
-    <select id="queryAuthMenusLevel1ByAppid" parameterType="String" resultType="com.tr.mita.portal.model.Menu">
+    <select id="queryAuthMenusByAppid" parameterType="map" resultType="com.tr.mita.portal.model.Menu">
         select id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
         from portal_menu where delflag='0' and menulevel=1 and appid=#{appid}
+        and id in (
+            SELECT resid
+            FROM portal_rolereslnk rl
+            WHERE restype='MENU'
+            AND roleid IN (
+                SELECT roleid FROM portal_roleauthcfg
+                WHERE roleauthtype='DEP' AND refid IN (SELECT departmentid FROM org_employee WHERE id IN(SELECT COALESCE(employeeid,0) FROM portal_user WHERE id = #{userid}))
+                UNION ALL
+                SELECT roleid FROM portal_roleauthcfg
+                WHERE roleauthtype='POS' AND refid IN (SELECT positionid FROM org_empposlnk WHERE employeeid IN(SELECT COALESCE(employeeid,0) FROM portal_user WHERE id = #{userid}))
+                UNION ALL
+                SELECT roleid FROM portal_roleauthcfg
+                WHERE roleauthtype='DEPPOS' AND refid IN (
+                    SELECT l.id
+                    FROM org_depposlnk l
+                    INNER JOIN org_department d ON l.departmentid=d.id AND d.delflag='0'
+                    INNER JOIN org_position p ON l.positionid=p.id AND p.delflag='0'
+                    INNER JOIN org_empposlnk el ON d.id = el.departmentid AND p.id=el.positionid
+                    INNER JOIN portal_user u ON el.employeeid=u.employeeid AND u.id=#{userid}
+                )
+            )
+        )
+        order by sortno
     </select>
     
     <select id="queryListWithPage" parameterType="map" resultType="com.tr.mita.portal.model.Menu">
@@ -42,6 +59,36 @@
         select id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
         from portal_menu
         WHERE delflag='0' and parentid = #{parentid}
+        order by sortno
+    </select>
+
+    <!-- 通过父id查询菜单 -->
+    <select id="queryAuthMenusByParentid" parameterType="map" resultType="com.tr.mita.portal.model.Menu">
+        select id, menuno, menuname, parentid, menulevel, menuurl, appid, sortno, menutype, remark
+        from portal_menu
+        WHERE delflag='0' and parentid = #{parentid}
+        and id in (
+            SELECT resid
+            FROM portal_rolereslnk rl
+            WHERE restype='MENU'
+            AND roleid IN (
+                SELECT roleid FROM portal_roleauthcfg
+                WHERE roleauthtype='DEP' AND refid IN (SELECT departmentid FROM org_employee WHERE id IN(SELECT COALESCE(employeeid,0) FROM portal_user WHERE id = #{userid}))
+                UNION ALL
+                SELECT roleid FROM portal_roleauthcfg
+                WHERE roleauthtype='POS' AND refid IN (SELECT positionid FROM org_empposlnk WHERE employeeid IN(SELECT COALESCE(employeeid,0) FROM portal_user WHERE id = #{userid}))
+                UNION ALL
+                SELECT roleid FROM portal_roleauthcfg
+                WHERE roleauthtype='DEPPOS' AND refid IN (
+                    SELECT l.id
+                    FROM org_depposlnk l
+                    INNER JOIN org_department d ON l.departmentid=d.id AND d.delflag='0'
+                    INNER JOIN org_position p ON l.positionid=p.id AND p.delflag='0'
+                    INNER JOIN org_empposlnk el ON d.id = el.departmentid AND p.id=el.positionid
+                    INNER JOIN portal_user u ON el.employeeid=u.employeeid AND u.id=#{userid}
+                )
+            )
+        )
         order by sortno
     </select>
     

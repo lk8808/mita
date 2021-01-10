@@ -78,6 +78,15 @@ public class RedisUtil {
     }
 
     /**
+     * 获取匹配到的key
+     * @param pattern
+     * @return
+     */
+    public Set<Serializable> getKeysPattern(final String pattern) {
+        return redisTemplate.keys(pattern);
+    }
+
+    /**
      * 删除对应的value
      *
      * @param key

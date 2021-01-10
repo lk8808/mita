@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tr.mita.entity.RespData;
+import com.tr.mita.comm.entity.RespData;
 
 @RestController
 @RequestMapping("/department")
@@ -20,22 +20,22 @@ public class DepartmentController {
 	private IDepartmentService departmentService;
 	
 	@RequestMapping("/getDepTree")
-	public RespData getDepTree() {
-		return departmentService.getDepartmentTree();
+	public List<Map<String, Object>> getDepTree() {
+		return departmentService.getDepTree();
 	}
 	
 	@RequestMapping("/queryAllDepsByParentid")
-	public RespData queryAllDepsByParentid(@RequestBody Map<String, Object> params) {
+	public Map<String, Object> queryAllDepsByParentid(@RequestBody Map<String, Object> params) {
 		return departmentService.queryAllDepsByParentid(params);
 	}
 	
 	@RequestMapping(value="/save")
-	public RespData save(@RequestBody Department department) {
+	public Integer save(@RequestBody Department department) throws Exception {
 		return departmentService.save(department);
 	}
 	
 	@RequestMapping(value="/del")
-	public RespData del(String ids) {
+	public Integer del(String ids) {
 		return departmentService.del(ids);
 	}
 

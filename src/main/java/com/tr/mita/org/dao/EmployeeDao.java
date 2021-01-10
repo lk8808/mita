@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.tr.mita.base.IBaseDao;
+import com.tr.mita.comm.dao.IBaseDao;
 import com.tr.mita.org.model.Employee;
 
 @Mapper

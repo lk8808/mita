@@ -1,6 +1,6 @@
 package com.tr.mita.portal.dao;
 
-import com.tr.mita.base.IBaseDao;
+import com.tr.mita.comm.dao.IBaseDao;
 import com.tr.mita.portal.model.User;
 import org.apache.ibatis.annotations.Mapper;
 

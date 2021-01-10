@@ -1,15 +1,14 @@
 package com.tr.mita.org.service;
 
+import com.tr.mita.comm.entity.RespData;
+
 import java.util.List;
 import java.util.Map;
 
-import com.tr.mita.org.model.Depposlnk;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import com.tr.mita.entity.RespData;
-
 public interface IDepposlnkService {
 
-	public RespData queryByDepid(Integer depid);
+	public List<Map<String, Object>> queryByDepid(Integer depid);
+
+	public List<Map<String, Object>> queryAllList();
 
 }
