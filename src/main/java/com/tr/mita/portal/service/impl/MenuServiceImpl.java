@@ -1,8 +1,6 @@
 package com.tr.mita.portal.service.impl;
 
-import com.tr.mita.comm.entity.RespData;
-import com.tr.mita.comm.entity.Rtsts;
-import com.tr.mita.comm.entity.UserObject;
+import com.tr.mita.base.entity.UserObject;
 import com.tr.mita.portal.dao.ApplicationDao;
 import com.tr.mita.portal.dao.MenuDao;
 import com.tr.mita.portal.model.Application;

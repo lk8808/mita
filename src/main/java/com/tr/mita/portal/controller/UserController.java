@@ -2,8 +2,7 @@ package com.tr.mita.portal.controller;
 
 import java.util.Map;
 
-import com.tr.mita.comm.entity.RespData;
-import com.tr.mita.comm.entity.UserObject;
+import com.tr.mita.base.entity.UserObject;
 import com.tr.mita.portal.model.User;
 import com.tr.mita.portal.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;

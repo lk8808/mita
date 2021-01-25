@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Department {
-    private Integer id;
+    private Long id;
 
     private String depno;
 
@@ -16,17 +16,17 @@ public class Department {
 
     private String workphone;
 
-    private Integer parentid;
+    private Long parentid;
 
     private String deppath;
 
     private Integer deplevel;
 
-    private Integer managerid;
+    private Long managerid;
 
     private String managername;
 
-    private Integer principalid;
+    private Long principalid;
 
     private String principal;
 
@@ -46,13 +46,13 @@ public class Department {
 
     private String delflag;
 
-    List<Integer> posids;
+    List<Long> posids;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -96,11 +96,11 @@ public class Department {
         this.workphone = workphone == null ? null : workphone.trim();
     }
 
-    public Integer getParentid() {
+    public Long getParentid() {
         return parentid;
     }
 
-    public void setParentid(Integer parentid) {
+    public void setParentid(Long parentid) {
         this.parentid = parentid;
     }
 
@@ -120,11 +120,11 @@ public class Department {
         this.deplevel = deplevel;
     }
 
-    public Integer getManagerid() {
+    public Long getManagerid() {
         return managerid;
     }
 
-    public void setManagerid(Integer managerid) {
+    public void setManagerid(Long managerid) {
         this.managerid = managerid;
     }
 
@@ -136,11 +136,11 @@ public class Department {
         this.managername = managername == null ? null : managername.trim();
     }
 
-    public Integer getPrincipalid() {
+    public Long getPrincipalid() {
         return principalid;
     }
 
-    public void setPrincipalid(Integer principalid) {
+    public void setPrincipalid(Long principalid) {
         this.principalid = principalid;
     }
 
@@ -216,11 +216,11 @@ public class Department {
         this.delflag = delflag == null ? null : delflag.trim();
     }
 
-    public List<Integer> getPosids() {
+    public List<Long> getPosids() {
         return posids;
     }
 
-    public void setPosids(List<Integer> posids) {
+    public void setPosids(List<Long> posids) {
         this.posids = posids;
     }
 

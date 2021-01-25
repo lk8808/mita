@@ -7,6 +7,4 @@ import com.tr.mita.org.model.Position;
 
 @Mapper
 public interface PositionDao extends IBaseDao<Position> {
-
-	public int deleteBatch(String[] ids);
 }

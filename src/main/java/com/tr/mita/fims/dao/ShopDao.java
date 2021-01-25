@@ -6,7 +6,4 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface ShopDao extends IBaseDao<Shop> {
-
-    public int deleteBatch(String[] ids);
-
 }

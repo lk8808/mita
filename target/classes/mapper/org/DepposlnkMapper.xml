@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tr.mita.org.dao.DepposlnkDao">
     
-    <select id="queryByDepid" parameterType="Integer" resultType="map">
+    <select id="queryByDepid" parameterType="Long" resultType="map">
         SELECT lnk.*, d.depname depname, p.posname posname
         FROM org_depposlnk lnk
         LEFT JOIN org_department d ON lnk.departmentid=d.id
@@ -27,7 +27,7 @@
         </foreach>
     </insert>
     
-    <delete id="deleteByDepid" parameterType="Integer">
+    <delete id="deleteByDepid" parameterType="Long">
         delete from org_depposlnk where departmentid=#{depid}
     </delete>
     

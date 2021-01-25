@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.tr.mita.comm.exception.RespException;
+import com.tr.mita.base.exception.RespException;
 import com.tr.mita.org.dao.PositionDao;
 import com.tr.mita.org.model.Position;
 import com.tr.mita.org.service.IPositionService;
@@ -18,9 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tr.mita.comm.entity.RespData;
-import com.tr.mita.comm.entity.Rtsts;
-import com.tr.mita.comm.entity.UserObject;
+import com.tr.mita.base.entity.UserObject;
 
 @Service
 @Transactional
@@ -86,7 +84,7 @@ public class PositionServiceImpl implements IPositionService {
 	}
 
 	private boolean isUnique(Position position) {
-		Integer tmpId = position.getId();
+		Long tmpId = position.getId();
 		position.setId(null);
 		Position tmp = positionDao.expand(position);
 		if (tmp != null && tmpId != tmp.getId()) {

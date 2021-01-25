@@ -1,6 +1,5 @@
 package com.tr.mita.fims.controller;
 
-import com.tr.mita.comm.entity.RespData;
 import com.tr.mita.fims.model.Shop;
 import com.tr.mita.fims.service.IShopService;
 import org.springframework.beans.factory.annotation.Autowired;

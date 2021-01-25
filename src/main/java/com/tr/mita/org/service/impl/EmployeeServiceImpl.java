@@ -8,7 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.tr.mita.comm.exception.RespException;
+import com.tr.mita.base.exception.RespException;
 import com.tr.mita.org.dao.EmployeeDao;
 import com.tr.mita.org.dao.EmpposlnkDao;
 import com.tr.mita.portal.dao.UserDao;
@@ -22,9 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tr.mita.comm.entity.RespData;
-import com.tr.mita.comm.entity.Rtsts;
-import com.tr.mita.comm.entity.UserObject;
+import com.tr.mita.base.entity.RespData;
+import com.tr.mita.base.entity.UserObject;
 import com.tr.mita.utils.DateUtil;
 import com.tr.mita.utils.MD5Util;
 
@@ -179,7 +178,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
 
 	private boolean isUnique(Employee employee) {
 		RespData respData = new RespData();
-		Integer tmpId = employee.getId();
+		Long tmpId = employee.getId();
 		employee.setId(null);
 		Employee tmp = employeeDao.expand(employee);
 		if (tmp != null && tmpId != tmp.getId()) {

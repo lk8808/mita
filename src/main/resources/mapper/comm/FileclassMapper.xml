@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tr.mita.comm.dao.FileclassDao">
+
+    <select id="expand" parameterType="com.tr.mita.comm.model.Fileclass" resultType="com.tr.mita.comm.model.Fileclass">
+        select * from comm_fileclass where delflag='0'
+        <if test="id != null and id > 0">and id=#{id}</if>
+        <if test="entityname != null">and entityname=#{entityname}</if>
+        limit 1
+    </select>
+
+    <!-- 分页查询列表 -->
+    <select id="queryListWithPage" parameterType="map" resultType="com.tr.mita.comm.model.Fileclass">
+        SELECT *
+        FROM comm_fileclass
+        where delflag='0'
+        <if test="classname != null and classname != ''">
+            and classname like '%${classname}%'
+        </if>
+        <if test="entityname != null and entityname != ''">
+            and entityname like '${entityname}%'
+        </if>
+        order by id
+        limit ${(page-1)*limit},${limit}
+    </select>
+    <!-- 统计查询数量 -->
+    <select id="count" parameterType="map" resultType="Integer">
+        SELECT count(1) FROM comm_fileclass
+        where delflag='0'
+        <if test="classname != null and classname != ''">
+            and classname like '%${classname}%'
+        </if>
+        <if test="entityname != null and entityname != ''">
+            and entityname like '${entityname}%'
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="com.tr.mita.comm.model.Fileclass">
+        insert into comm_fileclass
+        (classname, entityname, createtime, creator, delflag)values
+        (#{classname}, #{entityname}, #{createtime}, #{creator}, #{delflag})
+    </insert>
+
+    <update id="update" parameterType="com.tr.mita.comm.model.Fileclass">
+        update comm_fileclass
+        <set>
+            <if test="classname != null">classname=#{classname},</if>
+            <if test="entityname != null">entityname=#{entityname},</if>
+            <if test="modifytime != null">modifytime=#{modifytime},</if>
+            <if test="modifier != null">modifier=#{modifier},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="deleteBatch">
+        update comm_fileclass set delflag='1'
+        where id in
+        <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+    
+</mapper>

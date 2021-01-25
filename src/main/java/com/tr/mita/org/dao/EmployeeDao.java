@@ -18,6 +18,5 @@ public interface EmployeeDao extends IBaseDao<Employee> {
 	public List<Employee> queryAllEmpsByDepidWithPage(Map<String, Object> params);
 	
 	public int countAllEmpsByDepid(Map<String, Object> params);
-	
-	public int deleteBatch(String[] ids);
+
 }

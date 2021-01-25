@@ -1,7 +1,7 @@
 package com.tr.mita.comm.controller;
 
 import com.tr.mita.comm.service.ICacheService;
-import com.tr.mita.comm.entity.RespData;
+import com.tr.mita.base.entity.RespData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

@@ -11,11 +11,11 @@ import java.util.Map;
 @Mapper
 public interface DepposlnkDao extends IBaseDao<Depposlnk> {
 	
-	public List<Map<String, Object>> queryByDepid(@Param("depid") Integer depid);
+	public List<Map<String, Object>> queryByDepid(Long depid);
 
 	public List<Map<String, Object>> queryAllList_ext();
 	
 	public int insertByDepidPosids(Map<String, Object> params);
 
-	public int deleteByDepid(int depid);
+	public int deleteByDepid(long depid);
 }

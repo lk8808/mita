@@ -39,7 +39,7 @@
     </appender>
        
     <!--控制台打印资源加载信息 等级从trace开始 TRACE < DEBUG < INFO < WARN < ERROR-->  
-    <root level="INFO">     	  
+    <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>	    
     <logger name="com.tr.mita" level="INFO"/>

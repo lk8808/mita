@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.tr.mita.comm.exception.RespException;
+import com.tr.mita.base.exception.RespException;
 import com.tr.mita.org.dao.DepartmentDao;
 import com.tr.mita.org.dao.DepposlnkDao;
 import com.tr.mita.org.model.Department;
@@ -20,9 +20,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tr.mita.comm.entity.RespData;
-import com.tr.mita.comm.entity.Rtsts;
-import com.tr.mita.comm.entity.UserObject;
+import com.tr.mita.base.entity.RespData;
+import com.tr.mita.base.entity.Rtsts;
+import com.tr.mita.base.entity.UserObject;
 
 @Service
 public class DepartmentServiceImpl implements IDepartmentService {
@@ -46,14 +46,14 @@ public class DepartmentServiceImpl implements IDepartmentService {
 
 	@Override
 	public List<Map<String, Object>> getDepTree() {
-		return getDepartmentTreeByParentid(0);
+		return getDepartmentTreeByParentid(0l);
 	}
 
 	private List<Department> queryDepartmentsLevel1() {
 		return departmentDao.queryDepartmentsLevel1();
 	}
 
-	private List<Map<String, Object>> getDepartmentTreeByParentid(Integer parentid) {
+	private List<Map<String, Object>> getDepartmentTreeByParentid(Long parentid) {
 		List<Map<String, Object>> nodes = new ArrayList<Map<String, Object>>();
 		List<Department> departments = null;
 		if (parentid > 0) {
@@ -162,7 +162,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
 	}
 
 	private boolean isUnique(Department department) {
-		Integer tmpId = department.getId();
+		Long tmpId = department.getId();
 		department.setId(null);
 		Department tmp = departmentDao.expand(department);
 		if (tmp != null && tmpId != tmp.getId()) {

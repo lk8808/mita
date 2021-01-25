@@ -10,7 +10,7 @@ public interface IBaseDao<T> {
      * @param id 主键
      * @return T t
      */
-	T get(int id);
+	T get(long id);
 
     /**
      * 扩展单条数据
@@ -41,6 +41,13 @@ public interface IBaseDao<T> {
      * @return
      */
     List<T> queryListWithPage(Map<String, Object> params);
+
+    /**
+     * 根据查询条件查询总记录数
+     * @param params
+     * @return
+     */
+    Integer count(Map<String, Object> params);
     
     /**
      * 插入数据
@@ -73,11 +80,12 @@ public interface IBaseDao<T> {
      * @return int int
      */
     int deleteById(long id);
-    
+
     /**
-     * 根据查询条件查询总记录数
-     * @param queryMap
+     * 批量删除数据
+     * @param ids
      * @return
      */
-    Integer count(Map<String, Object> params);
+    public int deleteBatch(String[] ids);
+
 }

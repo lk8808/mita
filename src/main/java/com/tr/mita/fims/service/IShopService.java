@@ -1,6 +1,5 @@
 package com.tr.mita.fims.service;
 
-import com.tr.mita.comm.entity.RespData;
 import com.tr.mita.fims.model.Shop;
 import org.springframework.web.bind.annotation.RequestBody;
 

@@ -6,7 +6,7 @@ import java.util.Date;
 public class User {
     private Integer id;
 
-    private Integer employeeid;
+    private Long employeeid;
 
     private String username;
 
@@ -42,11 +42,11 @@ public class User {
         this.id = id;
     }
 
-    public Integer getEmployeeid() {
+    public Long getEmployeeid() {
         return employeeid;
     }
 
-    public void setEmployeeid(Integer employeeid) {
+    public void setEmployeeid(Long employeeid) {
         this.employeeid = employeeid;
     }
 

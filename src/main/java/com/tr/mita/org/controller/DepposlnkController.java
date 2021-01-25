@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tr.mita.comm.entity.RespData;
-
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +16,7 @@ public class DepposlnkController {
 	private IDepposlnkService depposlnkService;
 
 	@RequestMapping("/queryByDepid")
-	public List<Map<String, Object>> queryByDepid(Integer depid) {
+	public List<Map<String, Object>> queryByDepid(Long depid) {
 		return depposlnkService.queryByDepid(depid);
 	}
 

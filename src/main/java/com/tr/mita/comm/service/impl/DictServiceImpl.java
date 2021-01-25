@@ -10,8 +10,6 @@ import com.tr.mita.comm.service.IDictService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tr.mita.comm.entity.RespData;
-
 @Service
 public class DictServiceImpl implements IDictService {
 	

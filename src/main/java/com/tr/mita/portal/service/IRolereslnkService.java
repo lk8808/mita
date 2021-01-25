@@ -1,6 +1,5 @@
 package com.tr.mita.portal.service;
 
-import com.tr.mita.comm.entity.RespData;
 import com.tr.mita.portal.model.Rolereslnk;
 
 import java.util.List;

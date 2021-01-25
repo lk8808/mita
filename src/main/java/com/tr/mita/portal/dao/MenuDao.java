@@ -23,7 +23,5 @@ public interface MenuDao extends IBaseDao<Menu> {
 	public List<Menu> querySubMenusByAppidWithPage(Map<String, Object> params);
 	
 	public Integer countSubMenusByAppid(Map<String, Object> params);
-	
-	public int deleteBatch(String[] ids);
 
 }

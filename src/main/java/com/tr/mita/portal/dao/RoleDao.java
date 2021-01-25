@@ -17,5 +17,4 @@ public interface RoleDao extends IBaseDao<Role> {
 	
 	public Integer countByAppid(Map<String, Object> params);
 
-	public int deleteBatch(String[] ids);
 }

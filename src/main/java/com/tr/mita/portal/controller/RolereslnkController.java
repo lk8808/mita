@@ -1,6 +1,5 @@
 package com.tr.mita.portal.controller;
 
-import com.tr.mita.comm.entity.RespData;
 import com.tr.mita.portal.model.Rolereslnk;
 import com.tr.mita.portal.service.IRolereslnkService;
 import org.springframework.beans.factory.annotation.Autowired;

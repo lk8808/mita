@@ -1,8 +1,10 @@
 package com.tr.mita.base.config;
 
-import com.tr.mita.comm.entity.RespData;
-import com.tr.mita.comm.entity.Rtsts;
-import com.tr.mita.comm.exception.RespException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tr.mita.base.entity.RespData;
+import com.tr.mita.base.entity.Rtsts;
+import com.tr.mita.base.exception.RespException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
@@ -14,9 +16,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.io.IOException;
-import java.util.Map;
-
+/**
+ * 响应统一处理
+ */
 @ControllerAdvice
 public class GlobleResponseBodyAdvice implements ResponseBodyAdvice {
 
@@ -39,15 +41,26 @@ public class GlobleResponseBodyAdvice implements ResponseBodyAdvice {
      * @return
      */
     @Override
-    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        if (body instanceof RespData) {
-            return body;
-        } else {
+    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
+                                  Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+        if (body instanceof String) {
+            ObjectMapper om = new ObjectMapper();
             RespData respData = new RespData();
             respData.setRtdata(body);
-            return respData;
+            try {
+                return om.writeValueAsString(respData);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
         }
+        if (body instanceof RespData) {
+            return body;
+        }
+        RespData respData = new RespData();
+        respData.setRtdata(body);
+        return respData;
     }
+
 
     /**
      * 全局异常处理
@@ -57,7 +70,7 @@ public class GlobleResponseBodyAdvice implements ResponseBodyAdvice {
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public RespData errorHandler(Exception e) {
-        logger.error(e.getMessage());
+        e.printStackTrace();
         RespData respData = new RespData(new Rtsts("999999", e.getMessage()));
         return respData;
     }
@@ -70,7 +83,6 @@ public class GlobleResponseBodyAdvice implements ResponseBodyAdvice {
     @ResponseBody
     @ExceptionHandler(value = RespException.class)
     public RespData handlerRespException(RespException e) {
-        logger.error(e.getMessage());
         RespData respData = new RespData(new Rtsts(e.getErrcode(), e.getMessage()));
         return respData;
     }

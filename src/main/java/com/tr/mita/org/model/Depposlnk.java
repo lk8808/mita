@@ -3,37 +3,37 @@ package com.tr.mita.org.model;
 import java.util.Date;
 
 public class Depposlnk {
-    private Integer id;
+    private Long id;
 
-    private Integer departmentid;
+    private Long departmentid;
 
-    private Integer positionid;
+    private Long positionid;
 
     private Date createtime;
 
     private String creator;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getDepartmentid() {
+    public Long getDepartmentid() {
         return departmentid;
     }
 
-    public void setDepartmentid(Integer departmentid) {
+    public void setDepartmentid(Long departmentid) {
         this.departmentid = departmentid;
     }
 
-    public Integer getPositionid() {
+    public Long getPositionid() {
         return positionid;
     }
 
-    public void setPositionid(Integer positionid) {
+    public void setPositionid(Long positionid) {
         this.positionid = positionid;
     }
 

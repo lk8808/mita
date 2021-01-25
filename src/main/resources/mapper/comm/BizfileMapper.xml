@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tr.mita.comm.dao.BizfileDao">
+
+    <insert id="insert" parameterType="com.tr.mita.comm.model.Bizfile">
+        insert into comm_bizfile
+        (fileclassid, filename, filepath, filesize, filetype, fileuuid, entityname, entityid, filter, channelcode, createtime, creator, delflag)values
+        (#{fileclassid}, #{filename}, #{filepath}, #{filesize}, #{filetype}, #{fileuuid},
+            #{entityname}, #{entityid}, #{filter}, #{channelcode}, #{createtime}, #{creator}, #{delflag})
+    </insert>
+
+    <select id="queryByEntity" parameterType="map" resultType="com.tr.mita.comm.model.Bizfile">
+        select * from comm_bizfile
+        where delflag='0' and entityname = '${entityname}' and entityid='${entityid}'
+        <if test="filter != null and filter != ''">
+            and filter='${filter}'
+        </if>
+    </select>
+
+    <update id="deleteById" parameterType="long">
+        update comm_bizfile set delflag='1'
+        where id = #{fileid}
+    </update>
+    
+</mapper>

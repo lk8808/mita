@@ -2,7 +2,6 @@ package com.tr.mita.portal.service;
 
 import java.util.Map;
 
-import com.tr.mita.comm.entity.RespData;
 import com.tr.mita.portal.model.Role;
 
 public interface IRoleService {

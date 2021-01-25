@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Employee {
-    private Integer id;
+    private Long id;
 
     private String empno;
 
@@ -21,7 +21,7 @@ public class Employee {
 
     private String telephone;
 
-    private Integer departmentid;
+    private Long departmentid;
 
     private String depname;
 
@@ -43,7 +43,7 @@ public class Employee {
     
     private MultipartFile photo_ext;
 
-    List<Integer> posids;
+    List<Long> posids;
 
     public MultipartFile getPhoto_ext() {
 		return photo_ext;
@@ -53,11 +53,11 @@ public class Employee {
 		this.photo_ext = photo_ext;
 	}
 
-	public Integer getId() {
+	public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -109,11 +109,11 @@ public class Employee {
         this.telephone = telephone == null ? null : telephone.trim();
     }
 
-    public Integer getDepartmentid() {
+    public Long getDepartmentid() {
         return departmentid;
     }
 
-    public void setDepartmentid(Integer departmentid) {
+    public void setDepartmentid(Long departmentid) {
         this.departmentid = departmentid;
     }
 
@@ -189,11 +189,11 @@ public class Employee {
         this.photo = photo;
     }
 
-    public List<Integer> getPosids() {
+    public List<Long> getPosids() {
         return posids;
     }
 
-    public void setPosids(List<Integer> posids) {
+    public void setPosids(List<Long> posids) {
         this.posids = posids;
     }
 

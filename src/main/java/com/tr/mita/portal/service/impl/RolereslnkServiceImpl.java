@@ -1,7 +1,5 @@
 package com.tr.mita.portal.service.impl;
 
-import com.tr.mita.comm.entity.RespData;
-import com.tr.mita.comm.entity.Rtsts;
 import com.tr.mita.portal.dao.RolereslnkDao;
 import com.tr.mita.portal.model.Rolereslnk;
 import com.tr.mita.portal.service.IRolereslnkService;

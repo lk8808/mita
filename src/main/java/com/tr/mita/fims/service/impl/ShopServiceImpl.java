@@ -1,9 +1,7 @@
 package com.tr.mita.fims.service.impl;
 
-import com.tr.mita.comm.entity.RespData;
-import com.tr.mita.comm.entity.Rtsts;
-import com.tr.mita.comm.entity.UserObject;
-import com.tr.mita.comm.exception.RespException;
+import com.tr.mita.base.entity.UserObject;
+import com.tr.mita.base.exception.RespException;
 import com.tr.mita.fims.dao.ShopDao;
 import com.tr.mita.fims.model.Shop;
 import com.tr.mita.fims.service.IShopService;
@@ -35,14 +33,7 @@ public class ShopServiceImpl implements IShopService {
 
     @Override
     public Map<String, Object> queryListWithPage(Map<String, Object> params) {
-        //RespData respData = new RespData();
         Map<String, Object> retMap = new HashMap<String, Object>();
-        //设置分页
-        int page = (int)params.get("page");
-        int limit = (int)params.get("limit");
-        params.put("begin", (page-1)*limit);
-        //respData.setRtdata("bizdatas", shopDao.queryListWithPage(params));
-        //respData.setRtdata("total", shopDao.count(params));
         retMap.put("total", shopDao.count(params));
         retMap.put("bizdatas", shopDao.queryListWithPage(params));
         return retMap;

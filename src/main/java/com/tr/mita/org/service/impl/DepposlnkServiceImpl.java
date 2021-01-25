@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tr.mita.comm.entity.RespData;
-
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +25,7 @@ public class DepposlnkServiceImpl implements IDepposlnkService {
 	private DepartmentDao departmentDao;
 
 	@Override
-	public List<Map<String, Object>> queryByDepid(Integer depid) {
+	public List<Map<String, Object>> queryByDepid(Long depid) {
 		return depposlnkDao.queryByDepid(depid);
 	}
 

@@ -13,8 +13,8 @@ public interface EmpposlnkDao extends IBaseDao<Empposlnk> {
 	
 	public int insertByDepidPosids(Map<String, Object> params);
 
-	public List<Integer> queryPosidsByEmpid(int empid);
+	public List<Long> queryPosidsByEmpid(long empid);
 
-	public int deleteByEmpid(int empid);
+	public int deleteByEmpid(long empid);
 	
 }

@@ -2,7 +2,6 @@ package com.tr.mita.comm.controller;
 
 import com.tr.mita.comm.model.Dict;
 import com.tr.mita.comm.service.IDictService;
-import com.tr.mita.comm.entity.RespData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

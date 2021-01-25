@@ -17,7 +17,7 @@
         left join org_department d on s.departmentid = d.id
         left join org_employee e on s.employeeid = e.id
         where s.delflag='0'
-        limit #{begin}, #{limit}
+        limit ${(page-1)*limit},${limit}
     </select>
     <select id="count" parameterType="map" resultType="Integer">
         select count(1) from fims_shop where delflag='0'

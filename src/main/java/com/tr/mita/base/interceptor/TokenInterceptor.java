@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.tr.mita.comm.entity.RespData;
-import com.tr.mita.comm.entity.Rtsts;
+import com.tr.mita.base.entity.RespData;
+import com.tr.mita.base.entity.Rtsts;
 import com.tr.mita.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

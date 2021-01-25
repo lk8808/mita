@@ -1,15 +1,7 @@
 package com.tr.mita.portal.service.impl;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.tr.mita.comm.entity.RespData;
-import com.tr.mita.comm.entity.Rtsts;
-import com.tr.mita.comm.entity.UserObject;
-import com.tr.mita.comm.exception.RespException;
+import com.tr.mita.base.entity.UserObject;
+import com.tr.mita.base.exception.RespException;
 import com.tr.mita.portal.dao.RoleDao;
 import com.tr.mita.portal.model.Role;
 import com.tr.mita.portal.service.IRoleService;
@@ -19,6 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -75,7 +72,6 @@ public class RoleServiceImpl implements IRoleService {
 	}
 
 	private boolean isUnique(Role role) {
-		RespData respData = new RespData();
 		Integer tmpId = role.getId();
 		role.setId(null);
 		Role tmp = roleDao.expand(role);

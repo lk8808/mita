@@ -2,7 +2,6 @@ package com.tr.mita.portal.controller;
 
 import java.util.Map;
 
-import com.tr.mita.comm.entity.RespData;
 import com.tr.mita.portal.model.Role;
 import com.tr.mita.portal.service.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;

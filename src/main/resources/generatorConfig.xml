@@ -42,7 +42,7 @@
             <property name="enableSubPackages" value="true"/>      
             <property name="trimStrings" value="true" />    
         </javaModelGenerator>   -->
-         <javaModelGenerator targetPackage="com.tr.mita.fims.model" targetProject="./src/main/java">
+         <javaModelGenerator targetPackage="com.tr.mita.comm.model" targetProject="./src/main/java">
             <property name="enableSubPackages" value="true"/>      
             <property name="trimStrings" value="true" />    
         </javaModelGenerator> 
@@ -78,7 +78,7 @@
         <table tableName="org_empposlnk" domainObjectName="Empposlnk" /> 
         <table tableName="org_depemplnk" domainObjectName="Depemplnk" /> 
         <table tableName="org_depposlnk" domainObjectName="Depposlnk" />     -->
-        <table tableName="fims_shop" domainObjectName="Shop" />
-        
+        <table tableName="comm_fileclass" domainObjectName="Fileclass" />
+        <table tableName="comm_bizfile" domainObjectName="Bizfile" />
     </context>    
 </generatorConfiguration>

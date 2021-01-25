@@ -5,8 +5,8 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.tr.mita.comm.entity.RequestLog;
-import com.tr.mita.comm.entity.UserObject;
+import com.tr.mita.base.entity.RequestLog;
+import com.tr.mita.base.entity.UserObject;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Pointcut;

@@ -1,6 +1,6 @@
 package com.tr.mita.comm.service;
 
-import com.tr.mita.comm.entity.RespData;
+import com.tr.mita.base.entity.RespData;
 
 import java.util.Set;
 

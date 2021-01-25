@@ -1,12 +1,11 @@
 package com.tr.mita.comm.service.impl;
 
 import com.tr.mita.comm.service.ICacheService;
-import com.tr.mita.comm.entity.RespData;
+import com.tr.mita.base.entity.RespData;
 import com.tr.mita.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Set;
 
 @Service

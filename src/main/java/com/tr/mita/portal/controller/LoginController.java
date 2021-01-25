@@ -1,6 +1,5 @@
 package com.tr.mita.portal.controller;
 
-import com.tr.mita.comm.entity.RespData;
 import com.tr.mita.portal.service.IUserService;
 import com.tr.mita.utils.RedisUtil;
 import org.slf4j.Logger;

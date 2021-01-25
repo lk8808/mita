@@ -6,8 +6,6 @@ import java.util.Map;
 import com.tr.mita.org.model.Position;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.tr.mita.comm.entity.RespData;
-
 public interface IPositionService {
 
 	public Map<String, Object> queryListWithPage(@RequestBody Map<String, Object> params);

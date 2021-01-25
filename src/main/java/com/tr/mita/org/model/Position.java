@@ -3,7 +3,7 @@ package com.tr.mita.org.model;
 import java.util.Date;
 
 public class Position {
-    private Integer id;
+    private Long id;
 
     private String posno;
 
@@ -23,11 +23,11 @@ public class Position {
 
     private String delflag;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

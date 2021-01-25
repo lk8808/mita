@@ -9,8 +9,6 @@ import com.tr.mita.portal.model.Application;
 
 @Mapper
 public interface ApplicationDao extends IBaseDao<Application> {
-
-	public int deleteBatch(String[] ids);
 	
 	List<Application> queryAllAuthList(String userid);
 	

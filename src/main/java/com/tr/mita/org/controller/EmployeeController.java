@@ -5,13 +5,10 @@ import java.util.Map;
 
 import com.tr.mita.org.model.Employee;
 import com.tr.mita.org.service.IEmployeeService;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.tr.mita.comm.entity.RespData;
 
 @RestController
 @RequestMapping("/employee")
